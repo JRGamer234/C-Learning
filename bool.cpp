@@ -52,21 +52,25 @@ int main(){
 	int num3;
 	int resultado;
 	
-		printf("Introduce un numero: ");
+	printf("Introduce un numero: ");
 	scanf("%d", &num1);
-		printf("Introduce otro numero: ");
+	printf("Introduce otro numero: ");
 	scanf("%d", &num2);
-		printf("Introduce el último numero: ");
+	printf("Introduce el último numero: ");
 	scanf("%d", &num3);
 	
 	resultado = num1 + num2 + num3;
 	
 	if(resultado ==100){
-		printf("El resultado es igual a 100");
+		printf("El resultado es igual a 100\n");
 	}else if(resultado > 100){
-		printf("El resultado es mayor a 100");
+		printf("El resultado es mayor a 100\n");
 	}else{
-		printf("El resultado es menor a 100");
+		printf("El resultado es menor a 100\n");
 	}
 	
+	printf("El resultado es: %d", resultado);
 }
+
+
+
