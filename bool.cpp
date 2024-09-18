@@ -46,7 +46,7 @@ int main(){
   	/*
 		Programa que pida 3 numeros y los sume, al hacer la suma tiene que mostrar un mensaje diciendo si es (mayor o igual) a 100 el resultado de la suma 
 	*/
-	
+/*	
 	int num1;
 	int num2;
 	int num3;
@@ -70,6 +70,30 @@ int main(){
 	}
 	
 	printf("El resultado es: %d", resultado);
+}
+*/
+
+/*
+	Programa que pida un numero y si es par lo eleve al 3 y si no es par lo eleve a la 2, luego imprimimos en pantalla el resultado
+*/
+
+int num1;
+printf("Introduce un numero: ");
+scanf("%d", &num1);
+
+if(num1 % 2 == 0){
+	printf("Es par, el resultado al ser par elevado a 3 es: %d", num1 * num1 * num1);
+}else{
+	printf("Es impar, el resultado al ser impar elevado a 2 es: %d", num1 * num1);
+}
+
+
+
+
+
+
+
+
 }
 
 
