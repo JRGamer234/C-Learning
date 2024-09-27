@@ -41,7 +41,7 @@ int main(int argc, char *argv[]) {
     switch(modalidad) {
         case 1: 
             printf("Has escogido DRIFT.\n");
-            printf("¿Listo para correr contra alguien? \n1) Sí \n2) No\n");
+            printf("¿Listo para correr contra alguien? \n1) SI \n2) No\n");
             scanf("%i", &final);
             break;
         case 2:
