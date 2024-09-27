@@ -41,18 +41,12 @@ int main(int argc, char *argv[]) {
 		if(num3 < 0){
 			printf("ERROR");
 		}else{
-			while(numero3 >= 0){
-				printf("Numero: %i", num3);
+			while(num3 >= 0 ){
+				printf("Numero: %i \n", num3);
 				--num3;
 			}
 	
 		}
 		
-	//Modifica el programa de la historia interactiva de manera que cada vez que el personaje enuentre un final “malo” pierda una vida. Si se queda a 0 vidas, decreta final de programa lamentando su final.
-
-	
-	
-	
-	
 	return 0;
 }
