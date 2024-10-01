@@ -40,16 +40,14 @@ int main(){
 	scanf("%d", &c1);
 	
 	if (a1 == 0){
-		a1 = sqrt((c1+c1)-(b1*b1));
-		printf("A = %d , B = %d , C = %d ", a1,b1,c1);
+		a1 = sqrt((c1*c1)-(b1*b1));
 	}else if(b1 == 0){
 		b1 = sqrt((c1*c1)-(a1*a1));
-		printf("A = %d , B = %d , C = %d ", a1,b1,c1);
 	}else if(c1 == 0){
 		c1 = sqrt((a1*a1)+(b1*b1));
-		printf("A = %d , B = %d , C = %d ", a1,b1,c1);
 	}
-    
+	
+	printf("A = %d , B = %d , C = %d ", a1,b1,c1);
 
 	return 0;
 	
