@@ -110,7 +110,7 @@ int main(int argc, char *argv[]) {
         if (vidas > 0) {
             printf("Te quedan %d vidas.\n", vidas);
         } else {
-            printf("Te has quedado sin vidas. \nLamentamos tu triste final.\n");
+            printf("Te has quedado sin vidas. \nHAS PERDIDO.\n");
         }
     }
     
