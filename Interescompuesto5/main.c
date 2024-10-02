@@ -14,6 +14,8 @@ int main(int argc, char *argv[]) {
 		- Si el ID es multiplo de 10 tiene 10%
 		- Si el precio es multiplo de 3 tiene 10%
 		- Si el ID es multiplo de 3 tiene 5%
+	
+		El ID tiene que ser un numero de 1 a 100, si no se cumple la condicion tenemos que volver a pedir el id hasta que el usuario introduzca un ID váldio
 		
 		TODOS LOS DESCUENTOS SON ACUMULABLES Y SE CALCULAN SOBRE EL PRECIO ORIGINAL
 	*/
@@ -21,10 +23,20 @@ int main(int argc, char *argv[]) {
 	int id;
     int precio = 0;
 	double 	descuento = 0, pfinal;
-    printf("Ingrese el ID del producto: ");
-    scanf("%d", &id);
-    printf("Ingrese el precio original del producto: ");
+    
+   
+    
+    do {
+        printf("Introduzca un ID (entre 1 y 100): ");
+        scanf("%d", &id);
+        if (id < 1 || id > 100) {
+            printf("ERROR. \nVuelva a intentarlo\n");
+        }
+    } while (id < 1 || id > 100);
+    
+	printf("Ingrese el precio original del producto: ");
     scanf("%d", &precio);
+	
 	if ((id % 2) == 0) {
         descuento += 0.05;
     }
