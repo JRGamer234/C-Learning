@@ -32,7 +32,11 @@ int main(int argc, char *argv[]) {
 	if (opcion == 5) {
         printf("Saliendo de la calculadora...\n");
         break;
-}
+	}
+	if (opcion > 5){
+		printf("ERROR");
+		break;
+	}
 	
 	printf("Introduce un número:");
 	scanf("%d", &num1);
@@ -67,7 +71,7 @@ int main(int argc, char *argv[]) {
 	}
     
 	}
-	while(opcion != 4);
+	while(opcion != 5);
 	
 	return 0;
 }
