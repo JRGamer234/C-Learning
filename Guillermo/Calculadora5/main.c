@@ -29,6 +29,11 @@ int main(int argc, char *argv[]) {
     printf("Selecciona una opcion: \n");
     scanf("%d", &opcion);
 	
+	if (opcion == 5) {
+        printf("Saliendo de la calculadora...\n");
+        break;
+}
+	
 	printf("Introduce un número:");
 	scanf("%d", &num1);
 	printf("Introduce otro número:");		
