@@ -1,9 +1,18 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 int main(int argc, char *argv[]) {
    
-    int cpu;
+    int opcion, cpu;
+   
+    srand(time(NULL));
+   
+   printf("****************************");
+   printf("***Piedra, Papel o Tijera***");
+   printf("****************************");	
+   	
+   	printf("1) 1 vs 1\n2) 1 vs BOT ");
    
     srand(time(NULL));
    
