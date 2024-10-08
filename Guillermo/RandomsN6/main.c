@@ -4,30 +4,69 @@
 
 int main(int argc, char *argv[]) {
    
-    int opcion, cpu;
+    int opcion, cpu, jugador1, jugador2;
+    char *opciones[] = {"Piedra", "Papel", "Tijera"};
    
     srand(time(NULL));
-   
-   printf("****************************");
-   printf("***Piedra, Papel o Tijera***");
-   printf("****************************");	
-   	
-   	printf("1) 1 vs 1\n2) 1 vs BOT ");
-   
-    srand(time(NULL));
-   
-    do
-    {
-        system("cls");
-        cpu = 1 + rand() % 10;
-        printf("%d\n", cpu);
-        cpu = 1 + rand() % 10;
-        printf("%d\n", cpu);
-        cpu = 1 + rand() % 10;
-        printf("%d\n", cpu);
-        sleep(1);
-    }while(1);
-   
-   
+	do{
+    printf("******************************\n");
+    printf("*** Piedra, Papel o Tijera ***\n");
+    printf("******************************\n");    
+    printf("1) 1 vs 1\n2) 1 vs BOT\n3) Salir\n");
+    
+    printf("Elige una opción: ");
+    scanf("%d", &opcion);
+
+    switch (opcion) {
+        case 1:
+            // 1 vs 1
+            printf("Jugador 1, elige:\n1) Piedra\n2) Papel\n3) Tijera\n");
+            printf("Tu: ");
+            scanf("%d", &jugador1);
+            
+            printf("Jugador 2, elige:\n1) Piedra\n2) Papel\n3) Tijera\n");
+            printf("Tu: ");
+            scanf("%d", &jugador2);
+            
+            printf("Jugador 1 : %s\n", opciones[jugador1 - 1]);
+            printf("Jugador 2 : %s\n", opciones[jugador2 - 1]);
+
+            if (jugador1 == jugador2) {
+                printf("¡Empate!\n");
+            } else if ((jugador1 == 1 && cpu == 3) || (jugador1 == 2 && cpu == 1) || (jugador1 == 3 && cpu == 2)) {
+                printf("¡Jugador 1 gana!\n");
+            } else {
+                printf("¡Jugador 2 gana!\n");
+            }
+            break;
+        
+        case 2:
+            // 1 vs BOT
+            printf("Jugador, elige:\n1) Piedra\n2) Papel\n3) Tijera\n");
+            printf("Tu: ");
+            scanf("%d", &jugador1);
+            
+            cpu = 1 + rand() % 3;
+            printf("Bot: %s\n", opciones[cpu - 1]);
+
+            if (jugador1 == cpu) {
+                printf("¡Empate!\n");
+            } else if ((jugador1 == 1 && cpu == 3) || (jugador1 == 2 && cpu == 1) || (jugador1 == 3 && cpu == 2)) {
+                printf("¡Tú ganas!\n");
+            } else {
+                printf("¡BOT Gana!\n");
+            }
+            break;
+
+        case 3:
+            printf("¡Gracias por jugar!\n");
+            break;
+
+        default:
+            printf("ERROR.\n");
+            break;
+    }
+}
+	while(opcion != 3);
     return 0;
 }
