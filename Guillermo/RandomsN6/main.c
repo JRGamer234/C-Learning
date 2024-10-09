@@ -4,7 +4,7 @@
 
 int main(int argc, char *argv[]) {
    
-    int opcion, cpu, jugador1, jugador2;
+    int opcion, cpu, jugador1, jugador2, puntos1=0, puntos2=0, puntosb=0;
     char *opciones[] = {"Piedra", "Papel", "Tijera"};
    
     srand(time(NULL));
@@ -34,9 +34,18 @@ int main(int argc, char *argv[]) {
             if (jugador1 == jugador2) {
                 printf("¡Empate!\n");
             } else if ((jugador1 == 1 && cpu == 3) || (jugador1 == 2 && cpu == 1) || (jugador1 == 3 && cpu == 2)) {
-                printf("¡Jugador 1 gana!\n");
+                puntos1 + 1;
+				if(puntos1 >=3){
+                	printf("GANAS el jugador 1");
+				}
+				printf("¡Jugador 1 gana!\n");
             } else {
-                printf("¡Jugador 2 gana!\n");
+                puntos2 + 1;
+				if(puntos2 >=3){
+                	printf("GANAS el jugador 2");
+            }
+				printf("¡Jugador 2 gana!\n");
+                
             }
             break;
         
@@ -53,8 +62,13 @@ int main(int argc, char *argv[]) {
                 printf("¡Empate!\n");
             } else if ((jugador1 == 1 && cpu == 3) || (jugador1 == 2 && cpu == 1) || (jugador1 == 3 && cpu == 2)) {
                 printf("¡Tú ganas!\n");
+                puntos1 + 1;
+				if(puntos1 >=3){
+                	printf("GANAS el jugador 1");
+				}
             } else {
                 printf("¡BOT Gana!\n");
+                puntosb + 1;
             }
             break;
 
@@ -70,3 +84,8 @@ int main(int argc, char *argv[]) {
 	while(opcion != 3);
     return 0;
 }
+
+
+
+
+
