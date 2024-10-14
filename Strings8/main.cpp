@@ -11,8 +11,9 @@ int main(int argc, char** argv) {
 	*/
 	
 	
-	
-		
-	
+	string int numero=[];
+	int nume = 0;	
+	printf("Introduce un numero: ");
+	scanf("%d", &numero);
 	return 0;
 }
