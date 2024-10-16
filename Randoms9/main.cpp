@@ -12,7 +12,7 @@ int max, min;
 srand(time(NULL));
 
 for(int i = 0; i < 20; i ++){
-num[i] = (rand() % 99) + 1;
+num[i] = (rand() % 100) + 1;
 printf("%d\n", num[i]);
 }
 
