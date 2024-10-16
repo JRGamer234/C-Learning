@@ -25,6 +25,7 @@ max = num[i];
 min = num[i];
 }
 }
-printf("Max = %d \n", max);
+printf("Max = %d\n", max);
 printf("Min = %d\n", min);
+print("Iguales: %d\n",);
 }
