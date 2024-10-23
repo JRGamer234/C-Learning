@@ -34,13 +34,13 @@ int main(int argc, char *argv[]) {
             if (jugador1 == jugador2) {
                 printf("AEmpate!\n");
             } else if ((jugador1 == 1 && cpu == 3) || (jugador1 == 2 && cpu == 1) || (jugador1 == 3 && cpu == 2)) {
-                puntos1 + 1;
+                puntos1++;
 				if(puntos1 >=3){
                 	printf("GANAS el jugador 1");
 				}
 				printf("AJugador 1 gana!\n");
             } else {
-                puntos2 + 1;
+                puntos++;
 				if(puntos2 >=3){
                 	printf("GANAS el jugador 2");
             }
@@ -62,13 +62,13 @@ int main(int argc, char *argv[]) {
                 printf("AEmpate!\n");
             } else if ((jugador1 == 1 && cpu == 3) || (jugador1 == 2 && cpu == 1) || (jugador1 == 3 && cpu == 2)) {
                 printf("ATú ganas!\n");
-                puntos1 + 1;
+                puntos1++;
 				if(puntos1 >=3){
                 	printf("GANAS el jugador 1");
 				}
             } else {
                 printf("ABOT Gana!\n");
-                puntosb + 1;
+                puntosb++;
             }
             break;
 
