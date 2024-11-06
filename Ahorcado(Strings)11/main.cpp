@@ -1,82 +1,101 @@
-// Framework: Standard C++ libraries
-
 #include <iostream>
 #include <string>
 #include <vector>
+#include <algorithm>
 #include <ctime>
-#include <cstdlib>
+using namespace std;
 
-class Ahorcado {
-public:
-    static void main() {
-        std::string secretWord = getSecretWord();
-        std::vector<char> wordWithDashes = getDashesFromWord(secretWord);
-        bool isGameOver = false;
-        int attempts = 5;
-
-        do {
-            bool isAnyLetterGuessed = false;
-            std::cout << "Te quedan " << attempts << " intentos" << std::endl;
-            std::cout << wordWithDashes.data() << std::endl;
-            std::cout << "Introduce una letra:" << std::endl;
-            char letter;
-            std::cin >> letter;
-
-            // Recorrer palabra
-            for (size_t i = 0; i < secretWord.length(); i++) {
-                if (secretWord[i] == letter) {
-                    wordWithDashes[i] = letter;
-                    isAnyLetterGuessed = true;
-                }
-            }
-
-            // Fallar letras
-            if (!isAnyLetterGuessed) {
-                std::cout << "No has acertado ninguna letra" << std::endl;
-                --attempts;
-                if (attempts == 0) {
-                    std::cout << "¡Has perdido! Se acabaron los intentos." << std::endl;
-                    isGameOver = true;
-                }
-            } else {
-                // Ver si he ganado
-                bool isGameWon = !hasDashes(wordWithDashes);
-                if (isGameWon) {
-                    std::cout << "¡Has ganado el juego!" << std::endl;
-                    isGameOver = true;
-                }
-            }
-        } while (!isGameOver);
-
-        std::cout << wordWithDashes.data() << std::endl;
-    }
-
-    // Palabras
-    static std::string getSecretWord() {
-        std::string words[] = { "casa", "perro", "coche" };
-        std::srand(static_cast<unsigned int>(std::time(0)));
-        int n = std::rand() % (sizeof(words) / sizeof(words[0]));
-        return words[n];
-    }
-
-    // Guiones en las letras
-    static std::vector<char> getDashesFromWord(const std::string& word) {
-        size_t numberOfLettersInSecretWord = word.length();
-        std::vector<char> wordWithDashes(numberOfLettersInSecretWord, '_');
-        return wordWithDashes;
-    }
-
-    // Verificar guiones
-    static bool hasDashes(const std::vector<char>& array) {
-        for (char ch : array) {
-            if (ch == '_')
-                return true;
-        }
-        return false;
-    }
-};
+// Función para dibujar el ahorcado según los intentos fallidos
+void dibujarAhorcado(int intentosFallidos) {
+    cout << "  +---+" << endl;
+    cout << "  |   " << (intentosFallidos >= 1 ? "|" : " ") << endl;
+    cout << "  |   " << (intentosFallidos >= 2 ? "O" : " ") << endl;
+    cout << "  |  " << (intentosFallidos >= 3 ? "/" : " ") 
+         << (intentosFallidos >= 4 ? "|" : " ") 
+         << (intentosFallidos >= 5 ? "\\" : " ") << endl;
+    cout << "  |  " << (intentosFallidos >= 6 ? "/" : " ") 
+         << " " << (intentosFallidos >= 7 ? "\\" : " ") << endl;
+    cout << "  |" << endl;
+    cout << "=========" << endl;
+}
 
 int main() {
-    Ahorcado::main();
+    // Lista de palabras para el juego - CORREGIDO
+    vector<string> palabras = {
+        "programacion", "computadora", "desarrollo",
+        "tecnologia", "software", "videojuego"
+    };
+    
+    // Inicializar generador de números aleatorios
+    srand(time(0));
+    
+    while (true) {
+        // Seleccionar palabra aleatoria
+        string palabraSecreta = palabras[rand() % palabras.size()];
+        string palabraAdivinada(palabraSecreta.length(), '_');
+        int intentosFallidos = 0;
+        vector<char> letrasUsadas;
+        const int MAX_INTENTOS = 7;
+        
+        cout << "\n¡Bienvenido al Juego del Ahorcado!" << endl;
+        
+        while (intentosFallidos < MAX_INTENTOS && palabraAdivinada != palabraSecreta) {
+            cout << "\nPalabra: " << palabraAdivinada << endl;
+            cout << "Intentos fallidos: " << intentosFallidos << "/" << MAX_INTENTOS << endl;
+            cout << "Letras usadas: ";
+            for (char letra : letrasUsadas) {
+                cout << letra << " ";
+            }
+            cout << endl;
+            
+            dibujarAhorcado(intentosFallidos);
+            
+            char letra;
+            cout << "\nIngresa una letra: ";
+            cin >> letra;
+            letra = tolower(letra);
+            
+            // Verificar si la letra ya fue usada
+            if (find(letrasUsadas.begin(), letrasUsadas.end(), letra) != letrasUsadas.end()) {
+                cout << "¡Ya usaste esa letra! Intenta con otra." << endl;
+                continue;
+            }
+            
+            letrasUsadas.push_back(letra);
+            
+            // Verificar si la letra está en la palabra
+            bool letraEncontrada = false;
+            for (size_t i = 0; i < palabraSecreta.length(); i++) {
+                if (palabraSecreta[i] == letra) {
+                    palabraAdivinada[i] = letra;
+                    letraEncontrada = true;
+                }
+            }
+            
+            if (!letraEncontrada) {
+                intentosFallidos++;
+                cout << "¡Letra incorrecta!" << endl;
+            }
+        }
+        
+        // Mostrar resultado final
+        dibujarAhorcado(intentosFallidos);
+        cout << "\nLa palabra era: " << palabraSecreta << endl;
+        
+        if (palabraAdivinada == palabraSecreta) {
+            cout << "¡Felicitaciones! ¡Has ganado!" << endl;
+        } else {
+            cout << "¡Game Over! Mejor suerte la próxima vez." << endl;
+        }
+        
+        // Preguntar si quiere jugar de nuevo
+        char respuesta;
+        cout << "\n¿Quieres jugar de nuevo? (s/n): ";
+        cin >> respuesta;
+        if (tolower(respuesta) != 's') {
+            break;
+        }
+    }
+    
     return 0;
 }
