@@ -3,6 +3,7 @@
 #include <vector>
 #include <algorithm>
 #include <ctime>
+#include <limits>  
 using namespace std;
 
 // Función para dibujar el ahorcado según los intentos fallidos
@@ -20,15 +21,17 @@ void dibujarAhorcado(int intentosFallidos) {
 }
 
 int main() {
-    // Lista de palabras para el juego - CORREGIDO
-    vector<string> palabras = {
-        "programacion", "computadora", "desarrollo",
-        "tecnologia", "software", "videojuego"
-    };
-    
-    // Inicializar generador de números aleatorios
+    // Inicializar generador de números aleatorios una vez
     srand(time(0));
     
+    vector<string> palabras;
+palabras.push_back("programacion");
+palabras.push_back("computadora");
+palabras.push_back("desarrollo");
+palabras.push_back("tecnologia");
+palabras.push_back("software");
+palabras.push_back("videojuego");
+
     while (true) {
         // Seleccionar palabra aleatoria
         string palabraSecreta = palabras[rand() % palabras.size()];
@@ -43,9 +46,11 @@ int main() {
             cout << "\nPalabra: " << palabraAdivinada << endl;
             cout << "Intentos fallidos: " << intentosFallidos << "/" << MAX_INTENTOS << endl;
             cout << "Letras usadas: ";
-            for (char letra : letrasUsadas) {
-                cout << letra << " ";
-            }
+            for (size_t i = 0; i < letrasUsadas.size(); i++) {
+    char letra = letrasUsadas[i];
+    cout << letra << " ";
+}
+
             cout << endl;
             
             dibujarAhorcado(intentosFallidos);
@@ -55,6 +60,14 @@ int main() {
             cin >> letra;
             letra = tolower(letra);
             
+            // Verificar si el usuario ha ingresado una sola letra
+            if (!isalpha(letra) || cin.fail()) {
+                cin.clear();  // limpiar el estado de error de cin
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');  // ignorar cualquier entrada adicional
+                cout << "Entrada no válida. Por favor, ingresa una sola letra." << endl;
+                continue;
+            }
+
             // Verificar si la letra ya fue usada
             if (find(letrasUsadas.begin(), letrasUsadas.end(), letra) != letrasUsadas.end()) {
                 cout << "¡Ya usaste esa letra! Intenta con otra." << endl;
@@ -99,3 +112,4 @@ int main() {
     
     return 0;
 }
+
