@@ -1,60 +1,86 @@
-#include <iostream>
+#include <stdio.h>
 
-/* run this program using the console pauser or add your own getch, system("pause") or input loop */
+char tablero[3][3] = {{' ',' ',' '}, {' ',' ',' '}, {' ',' ',' '}};
+char jugadorActual = 'X';
 
-int main(int argc, char** argv) {
-	char palabra[50] = "hola";
-	
-	strcpy(palabra, "yy");
-	
-	printf("%s", palabra);
-	
-	int matriz[3][3] = {
-		{0, 1, 2},
-		{3, 4, 8},
-		{6, 7, 8}
-	}
-	
-	char palabras[3][5] = {
-		{'h','o', 'l', 'a'},
-		{'p', 'e', 'p', 'e'},
-		{'p', 'e', 'p', 'a'}
-	}
-	
-	char palabra2[3][5] = {
-		"hola",
-		"pepe",
-		"pepa"
-	}
-	
-	printf("%s", palabra2[0]);
-	
-	palabra2[0][0] = 'Y';
-	
-	printf("\n%c\n", palabra[0][0]);
-	
-	// sustituir e por Y
-	 
-	palabra[1][1] = "Y";
-	
-	if(palabra2[0][0] == palabra2[1][1]){
-		printf("Iguales");
-	}else{
-		printf("No");
-	}
-	
-	printf("\n\n");
-	
-	for(int i = 0; i < 3; i++){
-		printf("\n%s", palabra2[i]);
-	}
-	
-	printf("\n\n");
-	
-	for(int i = 0; i < 3; i++){
-		
-	}
-	
-	 	
-	return 0;
+void dibujarTablero() {
+    printf("\n    1   2   3\n");
+    printf("  +---+---+---+\n");
+    for(int i = 0; i < 3; i++) {
+        printf("%d ", i + 1);
+        for(int j = 0; j < 3; j++) {
+            printf("| %c ", tablero[i][j]);
+        }
+        printf("|\n");
+        printf("  +---+---+---+\n");
+    }
+    printf("\n");
+}
+
+bool hayGanador() {
+    for(int i = 0; i < 3; i++) {
+        if(tablero[i][0] == jugadorActual && tablero[i][1] == jugadorActual && tablero[i][2] == jugadorActual) return true;
+        if(tablero[0][i] == jugadorActual && tablero[1][i] == jugadorActual && tablero[2][i] == jugadorActual) return true;
+    }
+    if(tablero[0][0] == jugadorActual && tablero[1][1] == jugadorActual && tablero[2][2] == jugadorActual) return true;
+    if(tablero[0][2] == jugadorActual && tablero[1][1] == jugadorActual && tablero[2][0] == jugadorActual) return true;
+    return false;
+}
+
+bool tableroLleno() {
+    for(int i = 0; i < 3; i++)
+        for(int j = 0; j < 3; j++)
+            if(tablero[i][j] == ' ') return false;
+    return true;
+}
+
+int main() {
+    int fila, columna;
+    bool juegoTerminado = false;
+
+    printf("\n=== TRES EN RAYA ===\n");
+    printf("Instrucciones:\n");
+    printf("- Jugador 1 usa 'X'\n");
+    printf("- Jugador 2 usa 'O'\n");
+    printf("- Elige una posición indicando fila y columna\n");
+    printf("=====================\n\n");
+
+    while(!juegoTerminado) {
+        dibujarTablero();
+        printf("Es el turno del jugador %c\n", jugadorActual);
+        
+        do {
+            printf("¿En qué fila quieres poner tu ficha? (1-3): ");
+            scanf("%d", &fila);
+            printf("¿En qué columna quieres poner tu ficha? (1-3): ");
+            scanf("%d", &columna);
+            fila--; columna--;
+
+            if(fila < 0 || fila > 2 || columna < 0 || columna > 2) {
+                printf("\n¡Error! Por favor, elige números entre 1 y 3.\n\n");
+            }
+            else if(tablero[fila][columna] != ' ') {
+                printf("\n¡Esta casilla ya está ocupada! Elige otra.\n\n");
+            }
+        } while(fila < 0 || fila > 2 || columna < 0 || columna > 2 || tablero[fila][columna] != ' ');
+
+        tablero[fila][columna] = jugadorActual;
+
+        if(hayGanador()) {
+            dibujarTablero();
+            printf("\n¡FELICIDADES! ¡El jugador %c ha ganado la partida!\n\n", jugadorActual);
+            juegoTerminado = true;
+        }
+        else if(tableroLleno()) {
+            dibujarTablero();
+            printf("\n¡EMPATE! La partida ha terminado sin ganador.\n\n");
+            juegoTerminado = true;
+        }
+        else {
+            jugadorActual = (jugadorActual == 'X') ? 'O' : 'X';
+        }
+    }
+
+    printf("¿Quieres jugar otra partida? Ejecuta el programa de nuevo!\n");
+    return 0;
 }
