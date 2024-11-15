@@ -1,110 +1,169 @@
-
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <time.h>
 
-int print_map(int robot_i, int robot_j, int gas_i, int gas_j, int map_size);
-int move_robot(char direction, int *robot_i, int *robot_j, int *gasoline, int map_size, int gas_cost);
+void ImprimirTablero(int posRi, int posRj, int posBi, int posBj)
+{
+    int i,j;
+    for(i = 0;i < 10;i++)
+        {
+            for(j = 0;j < 10;j++)
+            {
+                if(posRi == i && posRj == j)
+                {
+                    printf("R");
+                }
+                else if(posBi == i && posBj == j)
+                {
+                    printf("B");
+                }
+                else
+                {
+                    printf("_");
+                }
+            }
+            printf("\n");
+        }
+   
+}
+
+char ElegirMovimiento()
+{
+    char movimiento;
+   
+    printf("Donde te quieres mover?\n(w)Arriba (s)Abajo (a)Izquierda (d)Derecha\n");
+    printf(">");
+    fflush(stdin);
+    scanf("%c",&movimiento);
+   
+    return movimiento;
+}
 
 int main() {
-    int robot_i, robot_j;
-    int gas_i, gas_j;
-    int gasoline;
-
-    const int map_size = 10;
-    const int max_gas = 100;
-    const int gas_cost = 10;
-
-    printf("Dime una posicion fila (0-%d): ", map_size - 1);
-    scanf("%d", &robot_i);
-    printf("Dime una posicion columna (0-%d): ", map_size - 1);
-    scanf("%d", &robot_j);
-
-    gasoline = max_gas;
-    
-	gas_i = rand() % map_size;
-    gas_j = rand() % map_size;
-    
-	while (gas_i == robot_i && gas_j == robot_j) {
-        gas_i = rand() % map_size;
-        gas_j = rand() % map_size;
-    }
-
-    while (gasoline > 0) {
-        if (print_map(robot_i, robot_j, gas_i, gas_j, map_size) != 0) {
-            printf("Error al imprimir el mapa.\n");
-            return 1;
+    int posRi, posRj;
+    int posBi, posBj;
+    int i,j;
+    int gasolina = 100;
+    char movimiento;
+    bool opcion_incorrecta = false;
+   
+    srand(time(NULL));
+   
+    printf("Bienvenid@ al programa del robot\n");
+    do
+    {
+        //QUIERO PEDIR LAS COORDENADAS DE FILA COLUMNA DE UN ROBOT
+        printf("Dame la coordenada de fila (0-9):");
+        fflush(stdin);
+        scanf("%d",&posRi);
+        printf("Dame la coordenada de columna (0-9):");
+        fflush(stdin);
+        scanf("%d",&posRj);
+   
+        if(posRi < 0 || posRi > 9 || posRj < 0 || posRj > 9)
+        {
+            printf("El valor es incorrecto\n");
+            opcion_incorrecta = true;
         }
-        
-        printf("Posicion actual: (%d, %d)\n", robot_i, robot_j);
-        printf("Gasolina restante: %d\n", gasoline);
-        printf("Moverse (n= norte, s= sur, e= este, o= oeste, q= salir): ");
-        char move;
-        scanf(" %c", &move);
-
-        if (move == 'q') {
-            printf("Saliendo del juego.\n");
-            break;
+        else
+        {
+            opcion_incorrecta = false;
         }
+    }while(opcion_incorrecta == true);
+   
+    posBi = rand() % 10;
+    posBj = rand() % 10;
+   
+    do
+    {
+        system("cls");
+        printf("Te quedan %d de gasolina\n", gasolina);
 
-        if (move_robot(move, &robot_i, &robot_j, &gasoline, map_size, gas_cost) != 0) {
-            printf("Movimiento no valido.\n");
-            continue;
-        }
-
-        if (robot_i == gas_i && robot_j == gas_j) {
-            printf("¡Has encontrado un bidón de gasolina! Gasolina recargada a %d.\n", max_gas);
-            gasoline = max_gas;
-            
-			gas_i = rand() % map_size;
-            gas_j = rand() % map_size;
-            while (gas_i == robot_i && gas_j == robot_j) {
-                gas_i = rand() % map_size;
-                gas_j = rand() % map_size;
+        //QUIERO PINTAR EL MAPA DEL JUEGO
+        ImprimirTablero(posRi,posRj,posBi,posBj);
+        movimiento = ElegirMovimiento();
+       
+        do
+        {    //QUIERO DAR LA OPCION AL USUARIO DE QUE MUEVA EL ROBOT
+           
+            switch(movimiento)
+            {
+                case 'w':
+                {
+                    if(posRi == 0)
+                    {
+                        posRi = 9;
+                    }
+                    else
+                    {
+                        posRi = posRi - 1; //posRi--;
+                    }
+                    gasolina = gasolina - 10; //gasolina-=10;
+                    opcion_incorrecta = false;
+                    break;
+                }
+                case 's':
+                {
+                    if(posRi == 9)
+                    {
+                        posRi = 0;
+                    }
+                    else
+                    {
+                        posRi = posRi + 1; //posRi++;
+                    }
+                    gasolina = gasolina - 10; //gasolina-=10;
+                    opcion_incorrecta = false;
+                    break;
+                }
+                case 'a':
+                {
+                    if(posRj == 0)
+                    {
+                        posRj = 9;
+                    }
+                    else
+                    {
+                        posRj = posRj - 1; //posRj--;
+                    }
+                    gasolina = gasolina - 10; //gasolina-=10;
+                    opcion_incorrecta = false;
+                    break;
+                }
+                case 'd':
+                {
+                    if(posRj == 9)
+                    {
+                        posRj = 0;
+                    }
+                    else
+                    {
+                        posRj = posRj + 1; //posRj++;
+                    }
+                    gasolina = gasolina - 10; //gasolina-=10;
+                    opcion_incorrecta = false;
+                    break;
+                }
+                default:
+                {
+                    opcion_incorrecta = true;
+                    break;
+                }
             }
-        }
-        if (gasoline <= 0) {
-            printf("¡Te has quedado sin gasolina! Fin del juego.\n");
-            break;
-        }
-    }
-
-    return 0;
-}
-
-int print_map(int robot_i, int robot_j, int gas_i, int gas_j, int map_size) {
-    for (int i = 0; i < map_size; i++) {
-        for (int j = 0; j < map_size; j++) {
-            if (i == robot_i && j == robot_j) {
-                printf(" R"); 
-            } else if (i == gas_i && j == gas_j) {
-                printf(" G"); 
-            } else {
-                printf(" -"); 
+            //COMPROBAR SI ESTOY ENCIMA DEL BIDON
+            if(posRi == posBi && posRj == posBj)
+            {
+                gasolina = 100;
+                posBi = rand() % 10;
+                posBj = rand() % 10;
             }
-        }
-        printf("\n");
-    }
-    return 0;
-}
+           
+        }while(opcion_incorrecta == true);
+   
+    }while(gasolina > 0);
+   
+    printf("Te has quedado sin gasolina\nGracias por jugar");
 
-int move_robot(char direction, int *robot_i, int *robot_j, int *gasoline, int map_size, int gas_cost) {
-    switch (direction) {
-        case 'n':
-            *robot_i = (*robot_i - 1 + map_size) % map_size;
-            break;
-        case 's':
-            *robot_i = (*robot_i + 1) % map_size;
-            break;
-        case 'e':
-            *robot_j = (*robot_j + 1) % map_size;
-            break;
-        case 'o':
-            *robot_j = (*robot_j - 1 + map_size) % map_size;
-            break;
-        default:
-            return 1;
-    }
-    *gasoline -= gas_cost;
     return 0;
 }
