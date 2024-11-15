@@ -25,18 +25,17 @@ void ImprimirTablero(int posRi, int posRj, int posBi, int posBj)
             }
             printf("\n");
         }
-   
 }
 
 char ElegirMovimiento()
 {
     char movimiento;
-   
+
     printf("Donde te quieres mover?\n(w)Arriba (s)Abajo (a)Izquierda (d)Derecha\n");
     printf(">");
     fflush(stdin);
     scanf("%c",&movimiento);
-   
+
     return movimiento;
 }
 
@@ -47,9 +46,9 @@ int main() {
     int gasolina = 100;
     char movimiento;
     bool opcion_incorrecta = false;
-   
+
     srand(time(NULL));
-   
+
     printf("Bienvenid@ al programa del robot\n");
     do
     {
