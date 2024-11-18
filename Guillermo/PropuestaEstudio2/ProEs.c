@@ -1,3 +1,8 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int ProEsc(){
+
 // Programa que solicite dos arrays de 10 posiciones numericas
 // y sea capaz de almacenar en un tercer array la suma de sus celdas
 // EJ:            9573162310
@@ -14,3 +19,6 @@
 // Ej: 91235 --->Por pantalla se devuelve: SI, ESTA LA SECUENCIA
 // Ej: 21379 --->Por pantalla se devuelve: NO, ESTA LA SECUENCIA
 
+
+
+}
