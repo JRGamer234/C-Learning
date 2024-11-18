@@ -96,9 +96,9 @@ int main() {
                     }
                     else
                     {
-                        posRi = posRi - 1; //posRi--;
+                        posRi = posRi - 4; //posRi--;
                     }
-                    gasolina = gasolina - 10; //gasolina-=10;
+                    gasolina = gasolina - 20; //gasolina-=10;
                     opcion_incorrecta = false;
                     break;
                 }
@@ -110,9 +110,9 @@ int main() {
                     }
                     else
                     {
-                        posRi = posRi + 1; //posRi++;
+                        posRi = posRi + 4; //posRi++;
                     }
-                    gasolina = gasolina - 10; //gasolina-=10;
+                    gasolina = gasolina - 20; //gasolina-=10;
                     opcion_incorrecta = false;
                     break;
                 }
@@ -124,9 +124,9 @@ int main() {
                     }
                     else
                     {
-                        posRj = posRj - 1; //posRj--;
+                        posRj = posRj - 4; //posRj--;
                     }
-                    gasolina = gasolina - 10; //gasolina-=10;
+                    gasolina = gasolina - 20; //gasolina-=10;
                     opcion_incorrecta = false;
                     break;
                 }
@@ -138,9 +138,9 @@ int main() {
                     }
                     else
                     {
-                        posRj = posRj + 1; //posRj++;
+                        posRj = posRj + 4; //posRj++;
                     }
-                    gasolina = gasolina - 10; //gasolina-=10;
+                    gasolina = gasolina - 20; //gasolina-=10;
                     opcion_incorrecta = false;
                     break;
                 }
