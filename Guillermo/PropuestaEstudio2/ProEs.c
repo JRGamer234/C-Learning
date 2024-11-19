@@ -21,9 +21,7 @@ int main(){
         printf("Introduce número: \n");
         scanf("%d", &numeros2[i]);
     }
-
-
-    // Opcional: Mostrar los números introducidos
+    // muestra los numeros
     printf("Números introducidos cadena1:\n");
     for (i = 0; i < 10; i++) {
         printf("%d -", numeros1[i]);
@@ -41,12 +39,13 @@ int main(){
     }
     printf("\n");
 
-    
-
 // Programa que sea capaz de detectar la secuencia 1 2 3
 // en un array numerico de 10 posiciones
 // Ej: 9595123234 --->Por pantalla se devuelve: SI, ESTA LA SECUENCIA
 // Ej: 9595023234 --->Por pantalla se devuelve: NO, ESTA LA SECUENCIA
+
+
+
 
 // Hacer un programa parecido al anterior, donde se detecte
 // la secuencia 123 pero esta vez en un numero entero
