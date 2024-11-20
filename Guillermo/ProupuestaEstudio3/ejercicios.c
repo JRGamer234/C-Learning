@@ -8,18 +8,25 @@ int main() {
 char palabra[100];
 
 printf("Introduce una palabra: ");
-scanf("%s", &palabra);
+scanf("%s", palabra);
 
 char ini = tolower(palabra[0]);
 char ulti = tolower(palabra[strlen(palabra) - 1]);
 
 if(ini == ulti){
-    printf("La palabra %s empieza y termina por la misma letra", palabra);
+    printf("La palabra %s empieza y termina por la misma letra\n", palabra);
 }else{
-    printf("Son diferentes la primera y la ultima letra");
+    printf("Son diferentes la primera y la ultima letra\n");
 }
 
 //-Escribe un programa que concatene dos palabras si la ultima letra de la primera coincide con la primera letra de la segunda.
+
+char palabra1[100], palabra2[100], concatenado[200];
+
+printf("Introduce una palabra: \n");
+scanf("%s", palabra1);
+printf("Introduce una palabra: \n");
+scanf("%s", palabra2);
 
 
 
