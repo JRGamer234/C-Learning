@@ -77,6 +77,9 @@ int main() {
                     break;
             }
         }
+        if(tecla == 27){
+            jugando = false;
+        }
     }
 
     return 0;
