@@ -19,8 +19,6 @@ if(ini == ulti){
     printf("Son diferentes la primera y la ultima letra");
 }
 
-
-
 //-Escribe un programa que concatene dos palabras si la ultima letra de la primera coincide con la primera letra de la segunda.
 
 
