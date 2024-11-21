@@ -28,6 +28,7 @@ scanf("%s", palabra1);
 printf("Introduce una palabra: \n");
 scanf("%s", palabra2);
 
+concatenado = strcat(palabra1, palabra2);
 
 
 //-Escribe un programa que tome una palabra y la imprima sin vocales juntando las letras entre huecos.
