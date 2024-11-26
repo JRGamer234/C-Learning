@@ -115,6 +115,5 @@ int main(){
         }
         printf("\n");
     } while (opcion != 7);
-
     return 0;
 }
