@@ -68,7 +68,7 @@ void multiplicar(){
             printf("La multiplicación es: %.2lf\n", num1 * num2);
 }
 
-int main(){
+int main(){ 
     int opcion;
     do {
         printf("===== MENU =====\n");
