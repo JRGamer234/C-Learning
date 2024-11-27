@@ -5,12 +5,16 @@
 
 int main(){
 
-
-
 /*-Programa que reciba dos palabras y saque una tercera alternando sus letras. Si las palabras tienen diferente longitud, la cadena más larga se imprimirá hasta el final tras agotar las letras de la palabra corta.
 Ej: "poblado" y "ciudadela" traen a la salida: "pcoibuldaaddoela"
 */
 
+char palabra1[100], palabra2[100], palabra3[200]
+
+printf("Introduce una palabra: \n");
+scanf("%s", palabra1);
+printf("Introduce otra palabra: \n");
+scanf("%s", palabra2);
 
 
 
