@@ -9,12 +9,27 @@ int main(){
 Ej: "poblado" y "ciudadela" traen a la salida: "pcoibuldaaddoela"
 */
 
+int i, j;
 char palabra1[100], palabra2[100], palabra3[200]
 
 printf("Introduce una palabra: \n");
 scanf("%s", palabra1);
 printf("Introduce otra palabra: \n");
 scanf("%s", palabra2);
+
+for (i = 0; i < length(palabra1); i++)
+{
+    if(palabra1[i] != '\0'){
+        palabra3[j] = palabra1[i];
+        j++;
+    }
+    if (palabra2[i] != '\0'){
+    {
+        palabra3[j] = palabra2[i];
+        j++;
+    }
+        
+}
 
 
 
