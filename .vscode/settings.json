@@ -3,7 +3,8 @@
     "files.associations": {
         "stdlib.h": "c",
         "iostream": "cpp",
-        "string.h": "c"
+        "string.h": "c",
+        "ostream": "c"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }
