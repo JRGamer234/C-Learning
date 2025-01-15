@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 
-/*-Procedimiento que pinte un mensaje por pantalla enmarcado en asteriscos*/
+/*1-Procedimiento que pinte un mensaje por pantalla enmarcado en asteriscos*/
 int pintarMensaje()
 {
     char nombre[50];
@@ -25,13 +25,13 @@ int pintarMensaje()
     }
     printf("\n");
 }
-/*-Función que devuelva la media de dos números.*/
+/*2-Función que devuelva la media de dos números.*/
 void Media(float n1, float n2, float *r)
 {
     *r = (n1 + n2) / 2;
 }
 
-/*-Función que devuelva la media de un array de números (quizás necesites un parámetro que diga cuantos números de ese array intervengan en esa media)*/
+/*3-Función que devuelva la media de un array de números (quizás necesites un parámetro que diga cuantos números de ese array intervengan en esa media)*/
 float calcularMedia(int array[], int cantidad){
     if (cantidad <= 0)
     {
@@ -47,25 +47,31 @@ float calcularMedia(int array[], int cantidad){
 
     return (float)suma / cantidad;
 }
-/*-Función que devuelva el último caracter de una palabra.*/
+/*4-Función que devuelva el último caracter de una palabra.*/
 
 char UltimoCaracter(char palabra[]){
     return palabra[strlen(palabra) - 1];
 }
-/*-Procedimiento que Imprima cualquier tablero de caracteres de un array doble (puedes especificar con parámetros de entrada aparte las filas/columnas del array).*/
+/*5-Procedimiento que Imprima cualquier tablero de caracteres de un array doble (puedes especificar con parámetros de entrada aparte las filas/columnas del array).*/
 
-/*-Función que devuelva verdadero o falso si un número es divisible por otro.*/
 
-/*-Función que devuelva verdadero o falso si un número es primo.*/
 
-/*-Función que devuelva el menor número de un array.*/
+/*6-Función que devuelva verdadero o falso si un número es divisible por otro.*/
 
-/*-Encapsula en una función el algoritmo del Palíndromo.*/
+/*7-Función que devuelva verdadero o falso si un número es primo.*/
 
-/*-Procedimiento que reciba una palabra y se sustituyan sus vocales por otra letra pasada por parámetro.*/
+/*8-Función que devuelva el menor número de un array.*/
 
-/*-Función/Procedimiento que ordene un array de números de menor a mayor*/
+/*9-Encapsula en una función el algoritmo del Palíndromo.*/
 
+/*10-Procedimiento que reciba una palabra y se sustituyan sus vocales por otra letra pasada por parámetro.*/
+
+/*11-Función/Procedimiento que ordene un array de números de menor a mayor*/
+
+
+/* ================================== */
+/* ====== Resultados con MAIN ======= */
+/* ================================== */
 void main(){
     // 1
     pintarMensaje();
@@ -97,6 +103,8 @@ void main(){
     char ultimo = UltimoCaracter(palabra);
     
     printf("El ultimo caracter de %s es: %c\n", palabra, ultimo);
+    
+    //5
 
 
 }
