@@ -8,7 +8,7 @@ typedef struct {
 } Dinosaurio;
 
 void morder(Dinosaurio *victima) {
-    (*victima).vida -= 10;
+    victima->vida -= 10;
 }
 
 void mostrarEstado(Dinosaurio dino1, Dinosaurio dino2) {
@@ -19,7 +19,7 @@ void mostrarEstado(Dinosaurio dino1, Dinosaurio dino2) {
 
 void menuCombate(Dinosaurio *atacante, Dinosaurio *defensor) {
     int opcion;
-    printf("\nTurno de %s\n", (*atacante).nombre);
+    printf("\nTurno de %s\n", atacante->nombre);
     printf("1) Morder\n");
     printf("2) Huir\n");
     printf("Elige tu acción: ");
@@ -28,10 +28,10 @@ void menuCombate(Dinosaurio *atacante, Dinosaurio *defensor) {
     switch(opcion) {
         case 1:
             morder(defensor);
-            printf("%s muerde a %s!\n", (*atacante).nombre, (*defensor).nombre);
+            printf("%s muerde a %s!\n", atacante->nombre, defensor->nombre);
             break;
         case 2:
-            printf("%s huye! %s gana!\n", (*atacante).nombre, (*defensor).nombre);
+            printf("%s huye! %s gana!\n", atacante->nombre, defensor->nombre);
             (*atacante).vida = 0;
             break;
         default:
