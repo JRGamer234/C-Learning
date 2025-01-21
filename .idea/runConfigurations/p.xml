@@ -1,0 +1,8 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="p" type="CppFileRunConfiguration" factoryName="CppFileRunConfiguration" singleton="false" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="C-Learning" TARGET_NAME="p" CONFIG_NAME="p">
+    <option name="sourceFile" value="C:\Users\ramos\OneDrive\Documentos\GitHub\C-Learning\3enRaya\main.cpp" />
+    <method v="2">
+      <option name="com.jetbrains.cidr.cpp.runfile.CppFileBuildBeforeRunTaskProvider$BasicBuildBeforeRunTask" enabled="true" />
+    </method>
+  </configuration>
+</component>
