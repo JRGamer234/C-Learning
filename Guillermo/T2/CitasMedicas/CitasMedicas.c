@@ -12,7 +12,6 @@
 #define MAX_PACIENTES 100
 #define MAX_CITAS 100
 
-// Estructuras usando typedef
 typedef struct {
     char nombre[50];
     char fecha_nacimiento[11];
@@ -28,13 +27,11 @@ typedef struct {
     int activo;
 } Cita;
 
-// Variables globales
 Paciente pacientes[MAX_PACIENTES];
 Cita citas[MAX_CITAS];
 int num_pacientes = 0;
 int num_citas = 0;
 
-// Funciones
 void mostrarMenu();
 void altaPaciente();
 void altaCita();
@@ -47,7 +44,6 @@ void limpiarPantalla();
 int main() {
     int opcion;
     
-    // Inicializar arrays
     for(int i = 0; i < MAX_PACIENTES; i++) {
         pacientes[i].activo = 0;
     }
@@ -130,7 +126,6 @@ void altaPaciente() {
     
     nuevoPaciente.activo = 1;
     
-    // Buscar espacio libre
     for(int i = 0; i < MAX_PACIENTES; i++) {
         if(!pacientes[i].activo) {
             pacientes[i] = nuevoPaciente;
@@ -166,7 +161,6 @@ void altaCita() {
     nuevaCita.id = num_citas + 1;
     nuevaCita.activo = 1;
     
-    // Buscar espacio libre
     for(int i = 0; i < MAX_CITAS; i++) {
         if(!citas[i].activo) {
             citas[i] = nuevaCita;
