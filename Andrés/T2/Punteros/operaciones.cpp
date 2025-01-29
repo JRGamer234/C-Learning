@@ -1,24 +1,26 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+
+void solicitar(float *numero){
+    printf("Introduce un numero: ");
+    scanf("%f", numero);
+}
+
 /*Calculadora con funciones que usen paso por referencias*/
 void sumar(float *resultado) {
     float num1, num2;
-    printf("Ingrese el primer numero: ");
-    scanf("%f", &num1);
-    printf("Ingrese el segundo numero: ");
-    scanf("%f", &num2);
+    solicitar(&num1);
+    solicitar(&num2);
     *resultado = num1 + num2;
-    printf("El resultado es: %.2f\n", *resultado);
+    printf("El resultado es: %f\n", *resultado);
 }
 
 /* Function to subtract two numbers */
 void restar(float *resultado) {
     float num1, num2;
-    printf("Ingrese el primer numero: ");
-    scanf("%f", &num1);
-    printf("Ingrese el segundo numero: ");
-    scanf("%f", &num2);
+    solicitar(&num1);
+    solicitar(&num2);
     *resultado = num1 - num2;
     printf("El resultado es: %.2f\n", *resultado);
 }
@@ -26,10 +28,8 @@ void restar(float *resultado) {
 /* Function to multiply two numbers */
 void multiplicar(float *resultado) {
     float num1, num2;
-    printf("Ingrese el primer numero: ");
-    scanf("%f", &num1);
-    printf("Ingrese el segundo numero: ");
-    scanf("%f", &num2);
+    solicitar(&num1);
+    solicitar(&num2);
     *resultado = num1 * num2;
     printf("El resultado es: %.2f\n", *resultado);
 }
@@ -37,10 +37,8 @@ void multiplicar(float *resultado) {
 /* Function to divide two numbers */
 void dividir(float *resultado) {
     float num1, num2;
-    printf("Ingrese el primer numero: ");
-    scanf("%f", &num1);
-    printf("Ingrese el segundo numero: ");
-    scanf("%f", &num2);
+    solicitar(&num1);
+    solicitar(&num2);
     if(num2 != 0) {
         *resultado = num1 / num2;
         printf("El resultado es: %.2f\n", *resultado);
