@@ -40,6 +40,7 @@ void borrarCita();
 void verPerfil();
 int buscarPaciente(char dni[]);
 void limpiarPantalla();
+void limpiarBuffer();
 
 int main() {
     int opcion;
@@ -54,6 +55,7 @@ int main() {
     do {
         mostrarMenu();
         scanf("%d", &opcion);
+        limpiarBuffer();
         limpiarPantalla();
         
         switch(opcion) {
@@ -80,13 +82,16 @@ int main() {
         }
         
         printf("\nPresiona Enter para continuar...");
-        getchar();
-        getchar();
+        scanf("%c", &opcion);
         limpiarPantalla();
         
     } while(opcion != 6);
     
     return 0;
+}
+
+void limpiarBuffer() {
+    fflush(stdin);
 }
 
 void mostrarMenu() {
@@ -111,18 +116,20 @@ void altaPaciente() {
     Paciente nuevoPaciente;
     printf("\n== Alta de Paciente ==\n");
     printf("\nNombre: ");
-    getchar();
-    fgets(nuevoPaciente.nombre, 50, stdin);
-    nuevoPaciente.nombre[strcspn(nuevoPaciente.nombre, "\n")] = 0;
+    scanf("%s[\n]", nuevoPaciente.nombre);
+    limpiarBuffer();
     
     printf("Fecha de nacimiento (DD/MM/AAAA): ");
-    scanf("%s", nuevoPaciente.fecha_nacimiento);
+    scanf("%10s", nuevoPaciente.fecha_nacimiento);
+    limpiarBuffer();
     
     printf("DNI: ");
-    scanf("%s", nuevoPaciente.dni);
+    scanf("%9s", nuevoPaciente.dni);
+    limpiarBuffer();
     
     printf("Fecha actual (DD/MM/AAAA): ");
-    scanf("%s", nuevoPaciente.fecha_registro);
+    scanf("%10s", nuevoPaciente.fecha_registro);
+    limpiarBuffer();
     
     nuevoPaciente.activo = 1;
     
@@ -130,7 +137,7 @@ void altaPaciente() {
         if(!pacientes[i].activo) {
             pacientes[i] = nuevoPaciente;
             num_pacientes++;
-            printf("\nPaciente registrado con éxito.\n");
+            printf("\nPaciente registrado.\n");
             return;
         }
     }
@@ -147,7 +154,8 @@ void altaCita() {
     
     printf("\n== Alta de Cita ==\n");
     printf("\nDNI del paciente: ");
-    scanf("%s", dni);
+    scanf("%9s", dni);
+    limpiarBuffer();
     
     if(buscarPaciente(dni) == -1) {
         printf("\nPaciente no encontrado.\n");
@@ -156,7 +164,8 @@ void altaCita() {
     
     strcpy(nuevaCita.dni_paciente, dni);
     printf("Fecha de la cita (DD/MM/AAAA): ");
-    scanf("%s", nuevaCita.fecha);
+    scanf("%10s", nuevaCita.fecha);
+    limpiarBuffer();
     
     nuevaCita.id = num_citas + 1;
     nuevaCita.activo = 1;
@@ -165,7 +174,7 @@ void altaCita() {
         if(!citas[i].activo) {
             citas[i] = nuevaCita;
             num_citas++;
-            printf("\nCita registrada con éxito. ID de cita: %d\n", nuevaCita.id);
+            printf("\nCita registrada. ID de cita: %d\n", nuevaCita.id);
             return;
         }
     }
@@ -177,7 +186,8 @@ void modificarCita() {
     
     printf("\n== Modificar Cita ==\n");
     printf("\nDNI del paciente: ");
-    scanf("%s", dni);
+    scanf("%9s", dni);
+    limpiarBuffer();
     
     printf("\nCitas encontradas:\n");
     for(int i = 0; i < MAX_CITAS; i++) {
@@ -186,8 +196,9 @@ void modificarCita() {
             encontrado = 1;
             
             printf("\nNueva fecha (DD/MM/AAAA): ");
-            scanf("%s", citas[i].fecha);
-            printf("\nCita modificada con éxito.\n");
+            scanf("%10s", citas[i].fecha);
+            limpiarBuffer();
+            printf("\nCita modificada.\n");
         }
     }
     
@@ -203,7 +214,8 @@ void borrarCita() {
     
     printf("\n== Borrar Cita ==\n");
     printf("\nDNI del paciente: ");
-    scanf("%s", dni);
+    scanf("%9s", dni);
+    limpiarBuffer();
     
     printf("\nCitas encontradas:\n");
     for(int i = 0; i < MAX_CITAS; i++) {
@@ -212,8 +224,8 @@ void borrarCita() {
             encontrado = 1;
             
             printf("\n¿Desea borrar esta cita? (s/n): ");
-            getchar();
             scanf("%c", &confirmar);
+            limpiarBuffer();
             
             if(confirmar == 's' || confirmar == 'S') {
                 citas[i].activo = 0;
@@ -233,7 +245,8 @@ void verPerfil() {
     
     printf("\n== Ver Perfil ==\n");
     printf("\nDNI del paciente: ");
-    scanf("%s", dni);
+    scanf("%9s", dni);
+    limpiarBuffer();
     
     indice = buscarPaciente(dni);
     if(indice != -1) {
