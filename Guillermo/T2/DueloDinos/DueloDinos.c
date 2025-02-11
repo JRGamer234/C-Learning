@@ -161,7 +161,6 @@ void menu() {
         printf("Nombre del dinosaurio 2: ");
         scanf("%s", dino2.nombre);
         
-        // Determinar quién empieza con tiro de iniciativa
         int iniciativa1 = calcularIniciativa(dino1);
         int iniciativa2 = calcularIniciativa(dino2);
         
