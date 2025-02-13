@@ -61,7 +61,7 @@ void morder(Dinosaurio *atacante, Dinosaurio *victima) {
 }
 
 void aplicarHabilidad(Dinosaurio *dino, Habilidad hab) {
-    if (strcmp(hab.parametro_modificable, "vida") == 0) {
+    if (strcmp(hab.parametro_modificable, "vida") == 0) { 
         dino->vida += hab.valor;
     } else if (strcmp(hab.parametro_modificable, "energia") == 0) {
         dino->energia += hab.valor;
