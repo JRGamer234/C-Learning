@@ -27,7 +27,7 @@ void generarBosque(char bosque[][20], int x, int y) {
     }
 }
 int hayArbolesAdyacentes(char bosque[][20], int x, int y, int i, int j) {
-    for (int di = -1; di <= 1; di++) {
+    for (int d i = -1; di <= 1; di++) {
         for (int dj = -1; dj <= 1; dj++) {
             if (di == 0 && dj == 0) continue;
             
