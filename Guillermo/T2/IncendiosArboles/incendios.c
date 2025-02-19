@@ -42,7 +42,7 @@ int hayArbolesAdyacentes(char bosque[][20], int x, int y, int i, int j) {
         }
     }
     return 0;
-}
+} 
 
 void propagarFuego(char bosque[][20], int x, int y) {
     char nuevoBosque[20][20];
