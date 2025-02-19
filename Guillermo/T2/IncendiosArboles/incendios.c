@@ -1,14 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include <unistd.h> // Para usar sleep()
+#include <windows.h> // Para usar Sleep()
 
 #define ARBOL '#'
 #define FUEGO 'X'
 #define CENIZA '.'
 #define FONDO '*'
+#define MAX_DIM 20
 
-void imprimirBosque(char bosque[][20], int x, int y) {
+void imprimirBosque(char bosque[][MAX_DIM], int x, int y) {
     system("cls");
     for (int i = 0; i < y; i++) {
         for (int j = 0; j < x; j++) {
@@ -18,7 +19,8 @@ void imprimirBosque(char bosque[][20], int x, int y) {
     }
     printf("\n");
 }
-void generarBosque(char bosque[][20], int x, int y) {
+
+void generarBosque(char bosque[][MAX_DIM], int x, int y) {
     srand(time(NULL));
     for (int i = 0; i < y; i++) {
         for (int j = 0; j < x; j++) {
@@ -26,8 +28,9 @@ void generarBosque(char bosque[][20], int x, int y) {
         }
     }
 }
-int hayArbolesAdyacentes(char bosque[][20], int x, int y, int i, int j) {
-    for (int d i = -1; di <= 1; di++) {
+
+int hayArbolesAdyacentes(char bosque[][MAX_DIM], int x, int y, int i, int j) {
+    for (int di = -1; di <= 1; di++) {
         for (int dj = -1; dj <= 1; dj++) {
             if (di == 0 && dj == 0) continue;
             
@@ -42,15 +45,12 @@ int hayArbolesAdyacentes(char bosque[][20], int x, int y, int i, int j) {
         }
     }
     return 0;
-} 
+}
 
-void propagarFuego(char bosque[][20], int x, int y) {
-    char nuevoBosque[20][20];
-    for (int i = 0; i < y; i++) {
-        for (int j = 0; j < x; j++) {
-            nuevoBosque[i][j] = bosque[i][j];
-        }
-    }
+void propagarFuego(char bosque[][MAX_DIM], int x, int y) {
+    char nuevoBosque[MAX_DIM][MAX_DIM];
+    memcpy(nuevoBosque, bosque, sizeof(nuevoBosque));
+    
     // Propagar el fuego
     for (int i = 0; i < y; i++) {
         for (int j = 0; j < x; j++) {
@@ -72,14 +72,10 @@ void propagarFuego(char bosque[][20], int x, int y) {
         }
     }
     // Actualizar el bosque
-    for (int i = 0; i < y; i++) {
-        for (int j = 0; j < x; j++) {
-            bosque[i][j] = nuevoBosque[i][j];
-        }
-    }
+    memcpy(bosque, nuevoBosque, sizeof(nuevoBosque));
 }
 
-int hayFuego(char bosque[][20], int x, int y) {
+int hayFuego(char bosque[][MAX_DIM], int x, int y) {
     for (int i = 0; i < y; i++) {
         for (int j = 0; j < x; j++) {
             if (bosque[i][j] == FUEGO) {
@@ -90,7 +86,7 @@ int hayFuego(char bosque[][20], int x, int y) {
     return 0;
 }
 
-void iniciarIncendio(char bosque[][20], int x, int y) {
+void iniciarIncendio(char bosque[][MAX_DIM], int x, int y) {
     // Iniciar el fuego
     while (1) {
         int i = rand() % y;
@@ -104,15 +100,15 @@ void iniciarIncendio(char bosque[][20], int x, int y) {
 
 int main() {
     int x, y;
-    char bosque[20][20];
+    char bosque[MAX_DIM][MAX_DIM];
     
     printf("Introduce el número de columnas (X): ");
     scanf("%d", &x);
     printf("Introduce el número de filas (Y): ");
     scanf("%d", &y);
     
-    if (x > 20 || y > 20) {
-        printf("Error: dimensiones máximas 20x20\n");
+    if (x > MAX_DIM || y > MAX_DIM) {
+        printf("Error: dimensiones máximas %dx%d\n", MAX_DIM, MAX_DIM);
         return 1;
     }
     
@@ -127,7 +123,7 @@ int main() {
     while (hayFuego(bosque, x, y)) {
         imprimirBosque(bosque, x, y);
         propagarFuego(bosque, x, y);
-        usleep(500000); //esperar medio segundito
+        Sleep(500); //esperar medio segundito
     }
     imprimirBosque(bosque, x, y);
     printf("La simulación ha terminado.\n");
