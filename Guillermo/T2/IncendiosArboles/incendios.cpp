@@ -98,18 +98,29 @@ void iniciarIncendio(char bosque[][MAX_DIM], int x, int y) {
     }
 }
 
+void velocidadIncendio(char bosque[][MAX_DIM], int x, int y, int velocidad) {
+    switch (velocidad) {
+        case 1:
+            Sleep(500);
+            break;
+        case 2:
+            Sleep(1000);
+            break;
+        case 3:
+            Sleep(2000);
+            break;
+    }
+}
+
 int main() {
-    int x, y, velocidad;
+    int x, y, velocidad = 0;
     char bosque[MAX_DIM][MAX_DIM];
     
     printf("Introduce el número de columnas (X): \n");
     scanf("%d", &x);
     printf("Introduce el número de filas (Y): \n");
     scanf("%d", &y);
-    printf("Velocidad de propagación del fuego: \n
-        1) Rápida\n
-        2) Media\n
-        3) Lenta\n");
+    printf("Velocidad de propagación del fuego: \n1) Rápida\n2) Media\n3) Lenta\n");
     scanf("%d", &velocidad);
     
     if (x > MAX_DIM || y > MAX_DIM) {
@@ -128,7 +139,7 @@ int main() {
     while (hayFuego(bosque, x, y)) {
         imprimirBosque(bosque, x, y);
         propagarFuego(bosque, x, y);
-        Sleep(500); //esperar medio segundito
+        velocidadIncendio(bosque, x, y, velocidad);
     }
     imprimirBosque(bosque, x, y);
     printf("La simulación ha terminado.\n");
