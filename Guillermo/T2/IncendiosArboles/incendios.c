@@ -99,13 +99,18 @@ void iniciarIncendio(char bosque[][MAX_DIM], int x, int y) {
 }
 
 int main() {
-    int x, y;
+    int x, y, velocidad;
     char bosque[MAX_DIM][MAX_DIM];
     
-    printf("Introduce el número de columnas (X): ");
+    printf("Introduce el número de columnas (X): \n");
     scanf("%d", &x);
-    printf("Introduce el número de filas (Y): ");
+    printf("Introduce el número de filas (Y): \n");
     scanf("%d", &y);
+    printf("Velocidad de propagación del fuego: \n
+        1) Rápida\n
+        2) Media\n
+        3) Lenta\n");
+    scanf("%d", &velocidad);
     
     if (x > MAX_DIM || y > MAX_DIM) {
         printf("Error: dimensiones máximas %dx%d\n", MAX_DIM, MAX_DIM);
