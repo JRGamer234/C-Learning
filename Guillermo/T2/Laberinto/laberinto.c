@@ -164,6 +164,15 @@ int resolverLaberinto(Laberinto *laberinto, Coordenada coordenada, Ruta *ruta) {
     return 0;
 }
 
+void marcarRutaEnLaberinto(Laberinto *laberinto, Ruta *ruta) {
+    for (int i = 0; i < ruta->numCoordenadas; i++) {
+        Coordenada coord = ruta->coordenadas[i];
+        if (!esEntrada(laberinto, coord) && !esSalida(laberinto, coord)) {
+            laberinto->celdas[coord.x][coord.y] = '.';
+        }
+    }
+}
+
 int main() {
     Laberinto *laberinto = crearLaberinto(10, 10);
     laberinto->entrada.x = 0;
@@ -180,13 +189,22 @@ int main() {
     laberinto->celdas[7][1] = '#';
     laberinto->celdas[8][1] = '#';
     laberinto->celdas[9][1] = '#';
+    laberinto->celdas[0][0] = 'E';
+    laberinto->celdas[9][9] = 'S';
+
+    printf("Laberinto inicial:\n");
+    imprimirLaberinto(laberinto);
+
     Ruta ruta;
     ruta.numCoordenadas = 0;
-    resolverLaberinto(laberinto, laberinto->entrada, &ruta);
-    for (int i = 0; i < ruta.numCoordenadas; i++) {
-        printf("(%d, %d)\n", ruta.coordenadas[i].x, ruta.coordenadas[i].y);
+    if (resolverLaberinto(laberinto, laberinto->entrada, &ruta)) {
+        marcarRutaEnLaberinto(laberinto, &ruta);
+        printf("\nLaberinto con la ruta más rápida:\n");
+        imprimirLaberinto(laberinto);
+    } else {
+        printf("\nNo se encontró una ruta desde la entrada hasta la salida.\n");
     }
+
     destruirLaberinto(laberinto);
     return 0;
 }
-
