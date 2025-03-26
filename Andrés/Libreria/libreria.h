@@ -16,7 +16,7 @@ void strcpy(char *dest, char *src) {
     dest[i] = '\0';
 }
 
-// strcmp - Comparar dos cadenas
+// strcmp - Comparar dos cadenas (comprueba caracteres ASCII)
 int strcmp(char *str1, char *str2) {
     int i = 0;
     for (i = 0; str1[i] != '\0' && str1[i] == str2[i]; i++);
