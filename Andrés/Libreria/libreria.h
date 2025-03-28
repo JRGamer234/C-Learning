@@ -119,3 +119,18 @@ void cifrado_cesar(char *texto, int clave, char *resultado) {
 void descifrado_cesar(char *texto, int clave, char *resultado) {
     cifrado_cesar(texto, -clave, resultado);
 }
+
+// Alternar letras entre mayúsculas y minúsculas
+void alternar_mayus_minus(char *cadena, char *resultado) {
+    int i = 0;
+    for (i = 0; cadena[i] != '\0'; i++) {
+        if (cadena[i] >= 'a' && cadena[i] <= 'z') {
+            resultado[i] = cadena[i] - 32; // Convertir a mayúscula
+        } else if (cadena[i] >= 'A' && cadena[i] <= 'Z') {
+            resultado[i] = cadena[i] + 32; // Convertir a minúscula
+        } else {
+            resultado[i] = cadena[i]; // Mantener otros caracteres
+        }
+    }
+    resultado[i] = '\0';
+}
