@@ -65,5 +65,20 @@ int main() {
     descifrado_cesar(texto_cifrado, 3, texto_descifrado);
     printf("Texto descifrado: %s\n", texto_descifrado);
 
+    // Prueba de alternar_mayus_minus
+    char cadena[] = "Me llamo Jorge";
+    char resultado[50];
+    alternar_mayus_minus(cadena, resultado);
+    printf("Alternar mayúsculas y minúsculas: %s\n", resultado);
+
+    // Prueba de contiene_subcadena
+    char palabra[] = "Programador";
+    char subcadena[] = "grama";
+
+    if (contiene_subcadena(palabra, subcadena)) {
+        printf("La subcadena '%s' está contenida en la palabra '%s'.\n", subcadena, palabra);
+    } else {
+        printf("La subcadena '%s' no está contenida en la palabra '%s'.\n", subcadena, palabra);
+    }
     return 0;
 }

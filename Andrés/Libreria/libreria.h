@@ -129,8 +129,22 @@ void alternar_mayus_minus(char *cadena, char *resultado) {
         } else if (cadena[i] >= 'A' && cadena[i] <= 'Z') {
             resultado[i] = cadena[i] + 32; // Convertir a minúscula
         } else {
-            resultado[i] = cadena[i]; // Mantener otros caracteres
+            resultado[i] = cadena[i];
         }
     }
     resultado[i] = '\0';
+}
+
+// Buscar si una subcadena pertenece a una palabra más larga
+int contiene_subcadena(char *palabra, char *subcadena) {
+    int i = 0, j = 0;
+    for (i = 0; palabra[i] != '\0'; i++) {
+        // Comprobar si la subcadena coincide a partir de la posición actual
+        for (j = 0; subcadena[j] != '\0' && palabra[i + j] == subcadena[j]; j++);
+        // Si se recorrió toda la subcadena, significa que se encontró
+        if (subcadena[j] == '\0') {
+            return 1; // Subcadena encontrada
+        }
+    }
+    return 0; // Subcadena no encontrada
 }

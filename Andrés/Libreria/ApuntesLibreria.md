@@ -22,6 +22,8 @@
 ###        - Obtener palabras de una frase por posicion
 ###        - Cifrado Cesar
 ###        - Descifrado Cesar
+###        - Alternar minus y mayus
+###        - Comprobar subcadenas
 
 #### Hay que guardar la libreria con la extension ".h" y añadirla aquí: "C:\Program Files (x86)\Dev-Cpp\MinGW64\include" (en dev c++) 
 #### Para visual studio code es aquí: "C:\MinGW\include".
