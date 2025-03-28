@@ -20,6 +20,9 @@ int sumaResta(int *array, int size){
     return result;
 }
 
+/*
+    Funcion que reciba un mapa de caracteres 
+*/
 int main(){
     int array[6];
     printf("Introduce 6 numeros del array: ");
