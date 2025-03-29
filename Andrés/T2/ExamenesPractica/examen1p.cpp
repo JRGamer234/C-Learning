@@ -74,11 +74,7 @@ void ejer6(){
 // 7. **Mayúscula a minúscula (Array char):**
 //    - Escribe un programa que convierta todas las letras de una cadena de mayúsculas a minúsculas.
 void ejer7(){
-    char frase[250];
-    char vocales[50];
-    printf("Introducir frase: %d", frase);
-    obtener_vocales(frase, vocales);
-    printf("Vocales en '%s': %s\n", frase, vocales);
+    
 }
 
 // 8. **Minúscula a mayúscula (Array char):**
