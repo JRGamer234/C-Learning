@@ -92,4 +92,5 @@ logrado derrotar (la vida se reinicia en cada combate)*/
 
 int main(){
     ejer1();
+    
 }
