@@ -1,14 +1,14 @@
 #include <stdio.h>
 
 // strlen - Obtener la longitud de una cadena
-int strlen(char *palabra) {
+int mi_strlen(char *palabra) {
     int i = 0;
     for (i = 0; palabra[i] != '\0'; i++);
     return i;
 }
 
 // strcpy - Copiar una cadena
-void strcpy(char *dest, char *src) {
+void mi_strcpy(char *dest, char *src) {
     int i = 0;
     for (i = 0; src[i] != '\0'; i++) {
         dest[i] = src[i];
@@ -17,7 +17,7 @@ void strcpy(char *dest, char *src) {
 }
 
 // strcmp - Comparar dos cadenas (comprueba caracteres ASCII)
-int strcmp(char *str1, char *str2) {
+int mi_strcmp(char *str1, char *str2) {
     int i = 0;
     for (i = 0; str1[i] != '\0' && str1[i] == str2[i]; i++);
     return str1[i] - str2[i];
@@ -25,7 +25,7 @@ int strcmp(char *str1, char *str2) {
 
 // Invertir palabra
 void invertir_palabra(char *palabra, char *resultado) {
-    int len = strlen(palabra);
+    int len = mi_strlen(palabra);
     int i = 0;
     for (i = 0; i < len; i++) {
         resultado[i] = palabra[len - i - 1];
