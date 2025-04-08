@@ -172,10 +172,74 @@ relacionada con un numero), tenemos que ordenar de mayor a menor todas las
 palabras usando como criterio la suma del valor ascii de cada una de sus letras
 EN MINUSCULA + el numero que tenia asociada la palabra (30 minutos)*/
 
-void ejer3(){
-    
+#define MAX_PALABRAS 10
+#define MAX_LONGITUD 100
+
+typedef struct{
+    char palabra[MAX_LONGITUD];
+    int numero;
+    int valor_total;
+}Entrada;
+
+//Funcion para calcular ASCII minus + numero
+int calcular_valor_total(char *palabra, int numero){
+    int suma = 0;
+    for(int i = 0; palabra[i] != '\0'; i++){
+        char c = mayuscula_a_minuscula(palabra[i]);
+        suma += (int)c;
+    }
+    return suma + numero;
 }
 
+//Intercambiar dos entradas
+void intercambiar(Entrada *a, Entrada *b){
+    Entrada temp; //Crea una estructura como Entrada 
+                  //pero temporal para hacer el cambio
+
+    // copiar lo de A dentro de temp
+    mi_strcpy(temp.palabra, a->palabra);
+    temp.numero = a->numero;
+    temp.valor_total = a->valor_total;
+    // copiar lo de B dentro de A
+    mi_strcpy(a->palabra, b->palabra);
+    a->numero = b->numero;
+    a->valor_total = b->valor_total;
+    // copiar lo de temp(original) dentro de B
+    mi_strcpy(b->palabra, temp.palabra);
+    b->numero = temp.numero;
+    b->valor_total = temp.valor_total;
+
+}
+
+//Procesar las palabras
+void ejer3(){
+    Entrada entradas[MAX_PALABRAS];
+
+    for(int i = 0; i < MAX_PALABRAS; i++){
+        printf("Introduce la palabra %d: ", (i+1));
+        scanf("%s", entradas[i].palabra);
+
+        printf("Introduce el numero: ");
+        scanf("%d", &entradas[i].numero);
+
+        entradas[i].valor_total = calcular_valor_total(entradas[i].palabra, entradas[i].numero);
+
+    }
+
+    //Ordenar mayor a menor
+    for(int i = 0; i < MAX_PALABRAS - 1; i++){
+        for(int j = 0; j < MAX_PALABRAS - i - 1; j++){
+            if(entradas[j].valor_total < entradas[j + 1].valor_total){
+                intercambiar(&entradas[j], &entradas[j + 1]);
+            }
+        }
+    }
+    //Resultado
+    printf("\nPalabras ordenadas de mayor a menor según valor (ASCII + número):\n");
+    for (int i = 0; i < MAX_PALABRAS; i++) {
+        printf("%s (%d) -> Valor total: %d\n", entradas[i].palabra, entradas[i].numero, entradas[i].valor_total);
+    }
+}
 
 /*Tenemos que desarrollar un simulador de combates con
 monstruos, al principio el simulador tiene que pedir nuestras estadísticas (ataque,
@@ -189,5 +253,5 @@ logrado derrotar (la vida se reinicia en cada combate)*/
 
 int main()
 {
-    ejer2();
+    ejer3();
 }

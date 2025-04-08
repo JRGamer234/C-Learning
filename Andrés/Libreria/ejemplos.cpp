@@ -4,18 +4,18 @@
 int main() {
     // Prueba de strlen
     char palabra1[] = "Jorge";
-    printf("Longitud de '%s': %d\n", palabra1, strlen(palabra1));
+    printf("Longitud de '%s': %d\n", palabra1, mi_strlen(palabra1));
 
     // Prueba de strcpy
     char origen[] = "Piloto";
     char destino[50];
-    strcpy(destino, origen);
+    mi_strcpy(destino, origen);
     printf("Copia de cadena: %s\n", destino);
 
     // Prueba de strcmp
     char str1[] = "Hola";
     char str2[] = "Holaaa";
-    printf("Comparación de cadenas: %d\n", strcmp(str1, str2));
+    printf("Comparación de cadenas: %d\n", mi_strcmp(str1, str2));
 
     // Prueba de invertir_palabra
     char palabra2[] = "Mundo";
