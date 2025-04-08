@@ -175,26 +175,30 @@ EN MINUSCULA + el numero que tenia asociada la palabra (30 minutos)*/
 #define MAX_PALABRAS 10
 #define MAX_LONGITUD 100
 
-typedef struct{
+typedef struct
+{
     char palabra[MAX_LONGITUD];
     int numero;
     int valor_total;
-}Entrada;
+} Entrada;
 
-//Funcion para calcular ASCII minus + numero
-int calcular_valor_total(char *palabra, int numero){
+// Funcion para calcular ASCII minus + numero
+int calcular_valor_total(char *palabra, int numero)
+{
     int suma = 0;
-    for(int i = 0; palabra[i] != '\0'; i++){
+    for (int i = 0; palabra[i] != '\0'; i++)
+    {
         char c = mayuscula_a_minuscula(palabra[i]);
         suma += (int)c;
     }
     return suma + numero;
 }
 
-//Intercambiar dos entradas
-void intercambiar(Entrada *a, Entrada *b){
-    Entrada temp; //Crea una estructura como Entrada 
-                  //pero temporal para hacer el cambio
+// Intercambiar dos entradas
+void intercambiar(Entrada *a, Entrada *b)
+{
+    Entrada temp; // Crea una estructura como Entrada
+                  // pero temporal para hacer el cambio
 
     // copiar lo de A dentro de temp
     mi_strcpy(temp.palabra, a->palabra);
@@ -208,35 +212,39 @@ void intercambiar(Entrada *a, Entrada *b){
     mi_strcpy(b->palabra, temp.palabra);
     b->numero = temp.numero;
     b->valor_total = temp.valor_total;
-
 }
 
-//Procesar las palabras
-void ejer3(){
+// Procesar las palabras
+void ejer3()
+{
     Entrada entradas[MAX_PALABRAS];
 
-    for(int i = 0; i < MAX_PALABRAS; i++){
-        printf("Introduce la palabra %d: ", (i+1));
+    for (int i = 0; i < MAX_PALABRAS; i++)
+    {
+        printf("Introduce la palabra %d: ", (i + 1));
         scanf("%s", entradas[i].palabra);
 
         printf("Introduce el numero: ");
         scanf("%d", &entradas[i].numero);
 
         entradas[i].valor_total = calcular_valor_total(entradas[i].palabra, entradas[i].numero);
-
     }
 
-    //Ordenar mayor a menor
-    for(int i = 0; i < MAX_PALABRAS - 1; i++){
-        for(int j = 0; j < MAX_PALABRAS - i - 1; j++){
-            if(entradas[j].valor_total < entradas[j + 1].valor_total){
+    // Ordenar mayor a menor
+    for (int i = 0; i < MAX_PALABRAS - 1; i++)
+    {
+        for (int j = 0; j < MAX_PALABRAS - i - 1; j++)
+        {
+            if (entradas[j].valor_total < entradas[j + 1].valor_total)
+            {
                 intercambiar(&entradas[j], &entradas[j + 1]);
             }
         }
     }
-    //Resultado
+    // Resultado
     printf("\nPalabras ordenadas de mayor a menor según valor (ASCII + número):\n");
-    for (int i = 0; i < MAX_PALABRAS; i++) {
+    for (int i = 0; i < MAX_PALABRAS; i++)
+    {
         printf("%s (%d) -> Valor total: %d\n", entradas[i].palabra, entradas[i].numero, entradas[i].valor_total);
     }
 }
@@ -251,7 +259,122 @@ simular cada combate empezando por el monstruo más débil (el que la suma de si
 ataque y defensa sea más baja) y nos dirá los monstruos que nuestro personaje ha
 logrado derrotar (la vida se reinicia en cada combate)*/
 
+#define NUM_MONSTRUOS 10
+
+typedef struct{
+    int ataque;
+    int defensa;
+    int vida;
+} Luchador;
+
+void pedir_estadisticas(Luchador *jugador){
+    printf("Introduce tu ataque (1-100): ");
+    scanf("%d", &jugador->ataque);
+    printf("\nIntroduce tu defensa (1-100): ");
+    scanf("%d", &jugador->defensa);
+    printf("\nIntroduce tu vida (100-1000): ");
+    scanf("%d", &jugador->vida);
+}
+
+void generar_monstruos(Luchador monsturos[], int cantidad){
+    for(int i = 0; i < cantidad; i++){
+        monsturos[i].ataque = rand()%100 + 1;
+        monsturos[i].defensa = rand()%100 + 1;
+        monsturos[i].vida = rand()%901 + 100; //Del 100-1000
+    }
+}
+
+//Ordenar de más débil a menos débil
+void ordenar_monstruos(Luchador monstruos[], int cantidad){
+    for(int i = 0; i < cantidad - 1; i++){
+        for(int j = 0; j < cantidad - i - 1; j++){
+            int suma1 = monstruos[j].ataque + monstruos[j].defensa;
+            int suma2 = monstruos[j+1].ataque + monstruos[j+1].defensa;
+            if(suma1 > suma2){
+                Luchador temp = monstruos[j];
+                monstruos[j] = monstruos[j + 1];
+                monstruos[j + 1] = temp;
+            }
+        }
+    }
+}
+
+int simular_combate(Luchador jugador, Luchador monstruo){
+    int vida_jugador = jugador.vida; //Resetear vidas
+    int vida_monstruo = monstruo.vida;
+
+    while(vida_jugador > 0 && vida_monstruo > 0){
+        int dano_a_monstruo = jugador.ataque - monstruo.defensa;
+        if(dano_a_monstruo < 0){
+            dano_a_monstruo = 0;
+        }
+        vida_monstruo -= dano_a_monstruo;
+
+        int dano_a_jugador = monstruo.ataque - jugador.defensa;
+        if(dano_a_jugador < 0){
+            dano_a_jugador = 0;
+        }
+        vida_jugador -= dano_a_jugador;
+    }
+    return vida_jugador > 0;
+}
+
+void ejer4(){
+    srand(time(NULL)); //Inicar el random
+
+    Luchador jugador;
+    Luchador monstruos[NUM_MONSTRUOS];
+    
+    pedir_estadisticas(&jugador);
+    generar_monstruos(monstruos, NUM_MONSTRUOS);
+    ordenar_monstruos(monstruos, NUM_MONSTRUOS);
+
+    int derrotados = 0;
+    for(int i = 0; i < NUM_MONSTRUOS; i++){
+        printf("Combate contra monstruo %d\n", (i+1));
+        if(simular_combate(jugador, monstruos[i])){
+            printf("Has ganado\n");
+            derrotados++;
+        } else{
+            printf("Has perdido\n");
+        }
+    }
+
+    printf("Derrotados: %d | Total de monstruos: %d\n", derrotados, NUM_MONSTRUOS);
+}
+
+
+
+
+
 int main()
 {
-    ejer3();
+    int op;
+    do{
+    printf("1) Ejer1 \n2) Ejer2 \n3) Ejer3 \n4) Ejer4 \n");
+    scanf("%d", &op);
+    switch (op)
+    {
+    case 1:
+    {
+        ejer1();
+    }
+    break;
+    case 2:
+    {
+        ejer2();
+    }
+    break;
+    case 3:{
+        ejer3();
+    }
+    break;
+    case 4:{
+        ejer4();
+    }
+    default:
+    printf("ERROR");
+        break;
+    }
+}while(op != 4);
 }
