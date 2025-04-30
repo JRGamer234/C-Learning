@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 typedef struct {
     char nombres[5];
@@ -32,12 +33,7 @@ int main() {
     for (int i = 0; i < 5; i++) {
         printf("Nombre del alumno: %s --> Nota: %d\n", grupo.nombres[i], grupo.notas[i]);
     }
-    for (int i = 0; i < 5; i++) {
-        free(grupo.nombres[i]);
-    }
-    free(grupo.nombres);
-    free(grupo.notas);
-
+    
     return 0;
 }
 
