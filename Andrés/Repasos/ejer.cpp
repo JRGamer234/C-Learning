@@ -53,11 +53,24 @@ void ejer3(){
 }
 
 void ejer4(){
+    char vocal[] = "aeiouAEIOU";
+    int cont = 0;
+    char palabra[100];
+    printf("Introduce una palabra: ");
+    scanf("%s", palabra);
+    while (palabra[i] != '\0'){{
+        for(int j = 0; vocales[j] != '\0'; j++){
+            if(palabra[i] == vocal[j]){
+                cont++;
+            }
+        }
+    }
+    printf("La palabra que has introducido tiene %d vocalles.", cont);
     
 }
 
 
 int main(){
-    ejer3();
+    ejer4();
 
 }
