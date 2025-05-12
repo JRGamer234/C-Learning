@@ -9,6 +9,7 @@ typedef struct nodo{
 Nodo* AnadirNodoFinal(Nodo *miLE, int d);
 Nodo* BorrarPrimerNodo(Nodo *miLE);
 Nodo* BorrarFinalNodo(Nodo *miLE);
+Nodo* SustituirNodos(Nodo* miLE);
 void ImprimirLista(Nodo *miLE);
 
 int main(){
@@ -17,11 +18,12 @@ int main(){
     lista = AnadirNodoFinal(lista, 1);
     lista = AnadirNodoFinal(lista, 2);
     lista = AnadirNodoFinal(lista, 3);
+    lista = AnadirNodoFinal(lista, 4);
 
     printf("Lista original:\n");
     ImprimirLista(lista);
 
-    lista = BorrarPrimerNodo(lista); // para borrar el último nodo hay que cambiar la funcion
+    lista = SustituirNodos(lista); // para borrar el último nodo hay que cambiar la funcion
     
     printf("Despu�s de borrar el primer nodo:\n");
     ImprimirLista(lista);
@@ -71,6 +73,22 @@ Nodo* BorrarFinalNodo(Nodo *miLE){
     }
     free(aux->next);
     aux->next = NULL;
+
+    return miLE;
+}
+
+Nodo* SustituirNodos(Nodo* miLE){
+    Nodo* segundo = miLE->next;
+    Nodo* aux = miLE;
+    
+    while (aux->next->next != NULL) {
+        aux = aux->next;
+    }
+    Nodo* ultimo = aux->next;
+
+    int temp = segundo->dato;
+    segundo->dato = ultimo->dato;
+    ultimo->dato = temp;
 
     return miLE;
 }
