@@ -4,19 +4,19 @@
 #include <stdbool.h>
 //#include <graphics.h>
 
-typedef struct Tiempo {
+struct Tiempo {
     char username[50];
     float tiempo; // en segundos
     struct Tiempo* next;
 } Tiempo;
 
-typedef struct Circuito {
+struct Circuito {
     char nombre[50];
     Tiempo* listaTiempos;
     struct Circuito* next;
 } Circuito;
 
-typedef struct User {
+struct User {
     char username[50];
     char password[50];
     struct User* next;
