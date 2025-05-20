@@ -3,28 +3,51 @@
 #include <string.h>
 #include <stdbool.h>
 //#include <graphics.h>
+#define RED   "\x1b[31m"
+#define GREEN "\x1b[32m"
+#define RESET "\x1b[0m"
 
-struct Tiempo {
+
+typedef struct Tiempo {
     char username[50];
     float tiempo; // en segundos
     struct Tiempo* next;
 } Tiempo;
 
-struct Circuito {
+typedef struct Circuito {
     char nombre[50];
     Tiempo* listaTiempos;
     struct Circuito* next;
 } Circuito;
 
-struct User {
+typedef struct User {
     char username[50];
     char password[50];
     struct User* next;
 } User;
 
+typedef struct ResultadoCarrera {
+    char fecha[20];
+    char tipo[30]; // "Resistencia 2h", "Sprint", etc.
+    int posicion;
+    struct ResultadoCarrera* next;
+} ResultadoCarrera;
+
+typedef struct BoxNode {
+    int numeroKart;
+    bool ocupado;
+    struct BoxNode* next;
+} BoxNode;
+
+typedef struct BoxColumn {
+    char nombre[6]; // "ROJO" o "AZUL"
+    BoxNode* karts;
+} BoxColumn;
+
 User* userList = NULL;
 User* usuarioActual = NULL;
 Circuito* listaCircuitos = NULL;
+ResultadoCarrera* listaResultados = NULL;
 
 float convertirTiempo(const char* tiempoStr) {
     int min, seg, mil;
@@ -239,6 +262,145 @@ void menuTiempos(Circuito* circuito) {
     } while (op != 0);
 }
 
+void registrarResultado() {
+    ResultadoCarrera* nuevo = (ResultadoCarrera*)malloc(sizeof(ResultadoCarrera));
+    if (!nuevo) return;
+
+    limpiarBuffer(); // por seguridad
+    printf("Ingrese la fecha (DD/MM/AAAA): ");
+    fgets(nuevo->fecha, sizeof(nuevo->fecha), stdin);
+    nuevo->fecha[strcspn(nuevo->fecha, "\n")] = 0;
+
+    printf("Tipo de carrera:\n");
+    printf("1. Resistencia 2h\n");
+    printf("2. Sprint\n");
+    printf("3. Resistencia más horas\n");
+    int tipo;
+    scanf("%d", &tipo);
+
+    switch (tipo) {
+        case 1: strcpy(nuevo->tipo, "Resistencia 2h"); break;
+        case 2: strcpy(nuevo->tipo, "Sprint"); break;
+        case 3: strcpy(nuevo->tipo, "Resistencia más horas"); break;
+        default: strcpy(nuevo->tipo, "Desconocido"); break;
+    }
+
+    printf("Posición final en la carrera: ");
+    scanf("%d", &nuevo->posicion);
+
+    nuevo->next = listaResultados;
+    listaResultados = nuevo;
+
+    printf("Resultado registrado con éxito.\n");
+}
+
+void verResultados() {
+    ResultadoCarrera* temp = listaResultados;
+    if (!temp) {
+        printf("No hay resultados registrados.\n");
+        return;
+    }
+
+    printf("=== RESULTADOS DE CARRERA ===\n");
+    while (temp) {
+        printf("Fecha: %s | Tipo: %s | Posición: %d\n", temp->fecha, temp->tipo, temp->posicion);
+        temp = temp->next;
+    }
+}
+
+void inicializarBoxColumn(BoxColumn* columna, const char* nombre) {
+    strcpy(columna->nombre, nombre);
+    columna->karts = NULL;
+
+    for (int i = 1; i <= 2; i++) {
+        BoxNode* nuevo = (BoxNode*)malloc(sizeof(BoxNode));
+        nuevo->numeroKart = i;
+        nuevo->ocupado = false;
+        nuevo->next = columna->karts;
+        columna->karts = nuevo;
+    }
+}
+
+BoxNode* agregarKart(BoxColumn* columna, int numero) {
+    BoxNode* nuevo = (BoxNode*)malloc(sizeof(BoxNode));
+    nuevo->numeroKart = numero;
+    nuevo->ocupado = false;
+    nuevo->next = NULL;
+
+    BoxNode* temp = columna->karts;
+    if (!temp) {
+        columna->karts = nuevo;
+    } else {
+        while (temp->next)
+            temp = temp->next;
+        temp->next = nuevo;
+    }
+    return nuevo;
+}
+
+void estrategiaBoxes() {
+    BoxColumn rojo, azul;
+    inicializarBoxColumn(&rojo, "ROJO");
+    inicializarBoxColumn(&azul, "AZUL");
+
+    char columna;
+    int numero;
+
+    while (true) {
+        printf("\nIntroduzca 'r' o 'a' seguido del número del kart (ej. r 5, 0 para salir): ");
+        limpiarBuffer();
+        if (scanf("%c %d", &columna, &numero) != 2) {
+            printf("Entrada inválida. Inténtelo de nuevo.\n");
+            limpiarBuffer();
+            continue;
+        }
+
+        if (numero == 0) {
+            printf("Saliendo de estrategia de boxes...\n");
+            return;
+        }
+
+        BoxColumn* target;
+        if (columna == 'r' || columna == 'R') {
+            target = &rojo;
+        } else if (columna == 'a' || columna == 'A') {
+            target = &azul;
+        } else {
+            printf("Columna inválida. Use 'r' o 'a'.\n");
+            continue;
+        }
+
+        agregarKart(target, numero);
+
+        // Mostrar columnas
+        printf("\n%-10s%-10s\n", "ROJO", "AZUL");
+
+        BoxNode* r = rojo.karts;
+        BoxNode* a = azul.karts;
+        for (int fila = 0; fila < 3; fila++) {
+            // ROJO
+            if (r) {
+                if (r->ocupado) printf(RED "%d\t" RESET, r->numeroKart);
+                else            printf(GREEN "%d\t" RESET, r->numeroKart);
+                r = r->next;
+            } else {
+                printf("\t");
+            }
+
+            // AZUL
+            if (a) {
+                if (a->ocupado) printf(RED "%d" RESET, a->numeroKart);
+                else            printf(GREEN "%d" RESET, a->numeroKart);
+                a = a->next;
+            }
+
+            printf("\n");
+        }
+    }
+
+    printf("\n%s? Ocupado%s, %s? Libre%s\n", RED, RESET, GREEN, RESET);
+}
+
 void postLoginMenu() {
     int op;
     do {
@@ -246,6 +408,9 @@ void postLoginMenu() {
         printf("1. Ver circuitos\n");
         printf("2. Anadir circuito\n");
         printf("3. Eliminar circuito\n");
+        printf("4. Registrar resultado carrera\n");
+        printf("5. Ver resultados\n");
+        printf("6. Estrategia en boxes\n");
         printf("0. Cerrar sesión\n");
         printf("Opción: ");
         scanf("%d", &op);
@@ -275,6 +440,9 @@ void postLoginMenu() {
 
             case 2: anadirCircuito(); break;
             case 3: eliminarCircuito(); break;
+            case 4: registrarResultado(); break;
+        	case 5: verResultados(); break;
+        	case 6: estrategiaBoxes(); break;
             case 0: printf("Cerrando sesión...\n"); usuarioActual = NULL; break;
             default: printf("Opción no válida.\n");
         }
@@ -301,6 +469,12 @@ void liberarMemoria() {
 
         free(c);
     }
+    while (listaResultados) {
+        ResultadoCarrera* r = listaResultados;
+        listaResultados = listaResultados->next;
+        free(r);
+    }
+
 }
 
 int main() {
