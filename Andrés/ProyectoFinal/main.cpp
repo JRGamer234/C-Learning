@@ -7,6 +7,7 @@
 #define GREEN "\x1b[32m"
 #define RESET "\x1b[0m"
 
+#define MAX_KARTS 100
 
 typedef struct Tiempo {
     char username[50];
@@ -308,12 +309,60 @@ void verResultados() {
     }
 }
 
+int contarKarts(BoxNode* nodo) {
+    int count = 0;
+    while (nodo) {
+        count++;
+        nodo = nodo->next;
+    }
+    return count;
+}
+
+void mostrarBoxes(BoxColumn rojo, BoxColumn azul) {
+    BoxNode* rojoArr[MAX_KARTS], *azulArr[MAX_KARTS];
+    int totalR = 0, totalA = 0;
+    
+    BoxNode* temp = rojo.karts;
+    while (temp && totalR < MAX_KARTS) {
+        rojoArr[totalR++] = temp;
+        temp = temp->next;
+    }
+
+    temp = azul.karts;
+    while (temp && totalA < MAX_KARTS) {
+        azulArr[totalA++] = temp;
+        temp = temp->next;
+    }
+
+    printf("ROJO\t\tAZUL\n");
+    int maxFilas = (totalR > totalA) ? totalR : totalA;
+    
+    for (int i = 0; i < maxFilas; i++) {
+        if (i < totalR) {
+            printf("%s%d\t%s", (i >= totalR - 2) ? GREEN : RED, rojoArr[i]->numeroKart, RESET);
+        } else {
+            printf("\t");
+        }
+
+        if (i < totalA) {
+            printf("%s%d%s", (i >= totalA - 2) ? GREEN : RED, azulArr[i]->numeroKart, RESET);
+        }
+        printf("\n");
+    }
+
+    printf("\n%s= Ocupado%s, %s= Libre%s\n", RED, RESET, GREEN, RESET);
+}
+
 void inicializarBoxColumn(BoxColumn* columna, const char* nombre) {
     strcpy(columna->nombre, nombre);
     columna->karts = NULL;
 
     for (int i = 1; i <= 2; i++) {
         BoxNode* nuevo = (BoxNode*)malloc(sizeof(BoxNode));
+        if (!nuevo) {
+            printf("Error: No se pudo asignar memoria.\n");
+            return;
+        }
         nuevo->numeroKart = i;
         nuevo->ocupado = false;
         nuevo->next = columna->karts;
@@ -323,17 +372,22 @@ void inicializarBoxColumn(BoxColumn* columna, const char* nombre) {
 
 BoxNode* agregarKart(BoxColumn* columna, int numero) {
     BoxNode* nuevo = (BoxNode*)malloc(sizeof(BoxNode));
+    if (!nuevo) {
+        printf("Error: No se pudo asignar memoria.\n");
+        return NULL;
+    }
     nuevo->numeroKart = numero;
     nuevo->ocupado = false;
     nuevo->next = NULL;
 
-    BoxNode* temp = columna->karts;
-    if (!temp) {
+    if (!columna->karts) {
         columna->karts = nuevo;
     } else {
-        while (temp->next)
-            temp = temp->next;
-        temp->next = nuevo;
+        BoxNode* ultimo = columna->karts;
+        while (ultimo->next) {
+            ultimo = ultimo->next;
+        }
+        ultimo->next = nuevo;
     }
     return nuevo;
 }
@@ -348,10 +402,10 @@ void estrategiaBoxes() {
 
     while (true) {
         printf("\nIntroduzca 'r' o 'a' seguido del número del kart (ej. r 5, 0 para salir): ");
-        limpiarBuffer();
-        if (scanf("%c %d", &columna, &numero) != 2) {
+        
+        if (scanf(" %c %d", &columna, &numero) != 2) {
             printf("Entrada inválida. Inténtelo de nuevo.\n");
-            limpiarBuffer();
+            while (getchar() != '\n');  // Limpieza de buffer
             continue;
         }
 
@@ -371,34 +425,8 @@ void estrategiaBoxes() {
         }
 
         agregarKart(target, numero);
-
-        // Mostrar columnas
-        printf("\n%-10s%-10s\n", "ROJO", "AZUL");
-
-        BoxNode* r = rojo.karts;
-        BoxNode* a = azul.karts;
-        for (int fila = 0; fila < 3; fila++) {
-            // ROJO
-            if (r) {
-                if (r->ocupado) printf(RED "%d\t" RESET, r->numeroKart);
-                else            printf(GREEN "%d\t" RESET, r->numeroKart);
-                r = r->next;
-            } else {
-                printf("\t");
-            }
-
-            // AZUL
-            if (a) {
-                if (a->ocupado) printf(RED "%d" RESET, a->numeroKart);
-                else            printf(GREEN "%d" RESET, a->numeroKart);
-                a = a->next;
-            }
-
-            printf("\n");
-        }
+        mostrarBoxes(rojo, azul);
     }
-
-    printf("\n%s? Ocupado%s, %s? Libre%s\n", RED, RESET, GREEN, RESET);
 }
 
 void postLoginMenu() {
