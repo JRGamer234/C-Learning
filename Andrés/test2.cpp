@@ -2,17 +2,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-<<<<<<< HEAD
-#include <graphics.h>
-#include <winbgim.h>
-#include <sstream>
-=======
 #include <cstring>
 #include <graphics.h>
 #include <winbgim.h>
 
 
->>>>>>> 37d98abb09c0d74074845813c25f14d61ee4a74f
 #define RED   "\x1b[31m"
 #define GREEN "\x1b[32m"
 #define RESET "\x1b[0m"
@@ -512,19 +506,7 @@ void liberarMemoria() {
         listaResultados = listaResultados->next;
         free(r);
     }
-}
 
-void mostrarMenu() {
-    setcolor(WHITE);
-    setbkcolor(BLACK);
-    cleardevice();
-    
-    outtextxy(100, 50, "=== MENÚ PRINCIPAL ===");
-    outtextxy(100, 100, "1. Registrarse");
-    outtextxy(100, 150, "2. Iniciar sesión");
-    outtextxy(100, 200, "3. Mostrar usuarios");
-    outtextxy(100, 250, "0. Salir");
-    outtextxy(100, 300, "Selecciona una opción:");
 }
 
 void dibujarMenu() {
@@ -542,57 +524,28 @@ void dibujarMenu() {
     rectangle(180, 90, 450, 270);  // Borde
 }
 
-int getMenuSelection() {
-    while (!ismouseclick(WM_LBUTTONDOWN)) {}  // Espera un clic
-    int x, y;
-    getmouseclick(WM_LBUTTONDOWN, x, y);
-
-    if (x >= 150 && x <= 450) {
-        if (y >= 100 && y <= 150) return 1;
-        if (y >= 170 && y <= 220) return 2;
-        if (y >= 240 && y <= 290) return 3;
-        if (y >= 310 && y <= 360) return 0;
-    }
-
-    return -1;
-}
-
 int main() {
     int gd = DETECT, gm;
-<<<<<<< HEAD
-    initgraph(&gd, &gm, "");
-=======
-    initwindow(640, 480);  // Ventana gráfica
->>>>>>> 37d98abb09c0d74074845813c25f14d61ee4a74f
+    initwindow(640, 480); // Abre una ventana gráfica
 
     int op;
     do {
-<<<<<<< HEAD
-        mostrarMenu();
-        scanf("%d", &op);
-=======
         dibujarMenu();
-        op = getMenuSelection();  // Detectar clic en los botones
->>>>>>> 37d98abb09c0d74074845813c25f14d61ee4a74f
+        op = getch() - '0';
 
         switch (op) {
-            case 1: registerUser(); break;
-            case 2: if (loginUser()) postLoginMenu(); break;
-            case 3: showUsers(); break;
-            case 0: break;  // Salir del programa
-            default: printf("Opción inválida.\n");
+            case 1: outtextxy(200, 350, "Registrarse seleccionado"); break;
+            case 2: outtextxy(200, 350, "Iniciar sesión seleccionado"); break;
+            case 3: outtextxy(200, 350, "Mostrar usuarios seleccionado"); break;
+            case 0: outtextxy(200, 350, "Saliendo..."); break;
+            default: outtextxy(200, 350, "Opción inválida.");
         }
-<<<<<<< HEAD
+
+        delay(1000);
     } while (op != 0);
 
     closegraph();
-    liberarMemoria();
-=======
-
-    } while (op != 0);
-
-    closegraph();
->>>>>>> 37d98abb09c0d74074845813c25f14d61ee4a74f
     return 0;
 }
+
 
