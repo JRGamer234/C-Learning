@@ -2,9 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-#include <graphics.h>
-#include <winbgim.h>
-#include <sstream>
+//#include <graphics.h>
 #define RED   "\x1b[31m"
 #define GREEN "\x1b[32m"
 #define RESET "\x1b[0m"
@@ -51,6 +49,20 @@ User* userList = NULL;
 User* usuarioActual = NULL;
 Circuito* listaCircuitos = NULL;
 ResultadoCarrera* listaResultados = NULL;
+
+// Aquí podríamos inicializar la pantalla gráfica
+void iniciarGraficos() {
+    int gd = DETECT, gm;
+    initgraph(&gd, &gm, "");
+    setbkcolor(WHITE);
+    cleardevice();
+}
+
+// Una función simple para mostrar texto en pantalla con `graphics.h`
+void mostrarTextoGraficos(char* mensaje, int x, int y, int color) {
+    setcolor(color);
+    outtextxy(x, y, mensaje);
+}
 
 float convertirTiempo(const char* tiempoStr) {
     int min, seg, mil;
@@ -504,30 +516,24 @@ void liberarMemoria() {
         listaResultados = listaResultados->next;
         free(r);
     }
-}
 
-void mostrarMenu() {
-    setcolor(WHITE);
-    setbkcolor(BLACK);
-    cleardevice();
-    
-    outtextxy(100, 50, "=== MENÚ PRINCIPAL ===");
-    outtextxy(100, 100, "1. Registrarse");
-    outtextxy(100, 150, "2. Iniciar sesión");
-    outtextxy(100, 200, "3. Mostrar usuarios");
-    outtextxy(100, 250, "0. Salir");
-    outtextxy(100, 300, "Selecciona una opción:");
 }
 
 int main() {
-    int gd = DETECT, gm;
-    initgraph(&gd, &gm, "");
-
+	
+	iniciarGraficos();
+    mostrarTextoGraficos("Bienvenido al sistema de carreras!", 100, 100, BLUE);
+    
     int op;
     inicializarCircuitos();
 
     do {
-        mostrarMenu();
+        printf("\n=== MENÚ PRINCIPAL ===\n");
+        printf("1. Registrarse\n");
+        printf("2. Iniciar sesión\n");
+        printf("3. Mostrar usuarios\n");
+        printf("0. Salir\n");
+        printf("Opción: ");
         scanf("%d", &op);
 
         switch(op) {
@@ -538,10 +544,12 @@ int main() {
             default: printf("Opción inválida.\n");
         }
     } while (op != 0);
-
-    closegraph();
+    
     liberarMemoria();
+    delay(5000); // Mantener la pantalla por 5 segundos
+    closegraph();
     return 0;
+
 }
 
 

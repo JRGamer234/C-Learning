@@ -3,8 +3,6 @@
 #include <string.h>
 #include <stdbool.h>
 #include <graphics.h>
-#include <winbgim.h>
-#include <sstream>
 #define RED   "\x1b[31m"
 #define GREEN "\x1b[32m"
 #define RESET "\x1b[0m"
@@ -320,15 +318,45 @@ int contarKarts(BoxNode* nodo) {
     return count;
 }
 
+
 void mostrarBoxes(BoxColumn rojo, BoxColumn azul) {
     BoxNode* rojoArr[MAX_KARTS], *azulArr[MAX_KARTS];
     int totalR = 0, totalA = 0;
-    
+
     BoxNode* temp = rojo.karts;
     while (temp && totalR < MAX_KARTS) {
         rojoArr[totalR++] = temp;
         temp = temp->next;
     }
+
+    temp = azul.karts;
+    while (temp && totalA < MAX_KARTS) {
+        azulArr[totalA++] = temp;
+        temp = temp->next;
+    }
+
+    printf("ROJO		AZUL");
+    int maxFilas = (totalR > totalA) ? totalR : totalA;
+
+    for (int i = 0; i < maxFilas; i++) {
+        if (i < totalR) {
+            printf("%s%d	%s", (i >= totalR - 2) ? GREEN : RED, rojoArr[i]->numeroKart, RESET);
+        } else {
+            printf("	");
+        }
+
+        if (i < totalA) {
+            printf("%s%d%s", (i >= totalA - 2) ? GREEN : RED, azulArr[i]->numeroKart, RESET);
+        }
+        printf("");
+    }
+
+    printf("%s= Ocupado%s, %s= Libre%s", RED, RESET, GREEN, RESET);
+
+    // Parte gráfica añadida
+    dibujarBoxesGraficos(rojo, azul);
+}
+
 
     temp = azul.karts;
     while (temp && totalA < MAX_KARTS) {
@@ -504,30 +532,54 @@ void liberarMemoria() {
         listaResultados = listaResultados->next;
         free(r);
     }
+
 }
 
-void mostrarMenu() {
-    setcolor(WHITE);
-    setbkcolor(BLACK);
-    cleardevice();
-    
-    outtextxy(100, 50, "=== MENÚ PRINCIPAL ===");
-    outtextxy(100, 100, "1. Registrarse");
-    outtextxy(100, 150, "2. Iniciar sesión");
-    outtextxy(100, 200, "3. Mostrar usuarios");
-    outtextxy(100, 250, "0. Salir");
-    outtextxy(100, 300, "Selecciona una opción:");
+
+void dibujarBoxesGraficos(BoxColumn rojo, BoxColumn azul) {
+    cleardevice(); // Limpia pantalla gráfica
+    outtextxy(100, 20, "Visualización de Boxes");
+
+    int y = 60;
+    BoxNode* r = rojo.karts;
+    BoxNode* a = azul.karts;
+
+    while (r || a) {
+        if (r) {
+            setcolor(r->ocupado ? RED : GREEN);
+            rectangle(50, y, 150, y + 30);
+            char texto[20];
+            sprintf(texto, "R%d", r->numeroKart);
+            outtextxy(60, y + 10, texto);
+            r = r->next;
+        }
+
+        if (a) {
+            setcolor(a->ocupado ? RED : GREEN);
+            rectangle(200, y, 300, y + 30);
+            char texto[20];
+            sprintf(texto, "A%d", a->numeroKart);
+            outtextxy(210, y + 10, texto);
+            a = a->next;
+        }
+
+        y += 40;
+    }
+
+    delay(1500); // Mostrar durante 1.5 segundos
 }
 
 int main() {
-    int gd = DETECT, gm;
-    initgraph(&gd, &gm, "");
-
     int op;
     inicializarCircuitos();
 
     do {
-        mostrarMenu();
+        printf("\n=== MENÚ PRINCIPAL ===\n");
+        printf("1. Registrarse\n");
+        printf("2. Iniciar sesión\n");
+        printf("3. Mostrar usuarios\n");
+        printf("0. Salir\n");
+        printf("Opción: ");
         scanf("%d", &op);
 
         switch(op) {
@@ -538,10 +590,9 @@ int main() {
             default: printf("Opción inválida.\n");
         }
     } while (op != 0);
-
-    closegraph();
+    
     liberarMemoria();
     return 0;
-}
 
+}
 
