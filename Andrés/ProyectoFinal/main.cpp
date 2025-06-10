@@ -1,9 +1,43 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+<<<<<<< HEAD
 
 // Estructuras simples
 typedef struct {
+=======
+#include <stdbool.h>
+<<<<<<< HEAD
+#include <graphics.h>
+#include <winbgim.h>
+#include <sstream>
+=======
+#include <cstring>
+#include <graphics.h>
+#include <winbgim.h>
+
+
+>>>>>>> 37d98abb09c0d74074845813c25f14d61ee4a74f
+#define RED   "\x1b[31m"
+#define GREEN "\x1b[32m"
+#define RESET "\x1b[0m"
+
+#define MAX_KARTS 100
+
+typedef struct Tiempo {
+    char username[50];
+    float tiempo; // en segundos
+    struct Tiempo* next;
+} Tiempo;
+
+typedef struct Circuito {
+    char nombre[50];
+    Tiempo* listaTiempos;
+    struct Circuito* next;
+} Circuito;
+
+typedef struct User {
+>>>>>>> 4b47a765a008182bcfca4654a3f2adcac6d9d4a7
     char username[50];
     char password[50];
 } Usuario;
@@ -93,9 +127,206 @@ int login() {
             return 1;
         }
     }
+<<<<<<< HEAD
     
     printf("Credenciales incorrectas!\n");
     pausa();
+=======
+    return nuevo;
+}
+
+void estrategiaBoxes() {
+    BoxColumn rojo, azul;
+    inicializarBoxColumn(&rojo, "ROJO");
+    inicializarBoxColumn(&azul, "AZUL");
+
+    char columna;
+    int numero;
+
+    while (true) {
+        printf("\nIntroduzca 'r' o 'a' seguido del número del kart (ej. r 5, 0 para salir): ");
+        
+        if (scanf(" %c %d", &columna, &numero) != 2) {
+            printf("Entrada inválida. Inténtelo de nuevo.\n");
+            while (getchar() != '\n');  // Limpieza de buffer
+            continue;
+        }
+
+        if (numero == 0) {
+            printf("Saliendo de estrategia de boxes...\n");
+            return;
+        }
+
+        BoxColumn* target;
+        if (columna == 'r' || columna == 'R') {
+            target = &rojo;
+        } else if (columna == 'a' || columna == 'A') {
+            target = &azul;
+        } else {
+            printf("Columna inválida. Use 'r' o 'a'.\n");
+            continue;
+        }
+
+        agregarKart(target, numero);
+        mostrarBoxes(rojo, azul);
+    }
+}
+
+void postLoginMenu() {
+    int op;
+    do {
+        printf("\n--- MENÚ USUARIO (%s) ---\n", usuarioActual->username);
+        printf("1. Ver circuitos\n");
+        printf("2. Anadir circuito\n");
+        printf("3. Eliminar circuito\n");
+        printf("4. Registrar resultado carrera\n");
+        printf("5. Ver resultados\n");
+        printf("6. Estrategia en boxes\n");
+        printf("0. Cerrar sesión\n");
+        printf("Opción: ");
+        scanf("%d", &op);
+
+        switch(op) {
+            case 1: {
+   				mostrarCircuitos();
+    			printf("Seleccione un número o 0 para volver: ");
+    			int sel;
+    			scanf("%d", &sel);
+    			if (sel == 0) break;
+
+    			Circuito* temp = listaCircuitos;
+   	 			int i = 1;
+    			while (temp && i < sel) {
+        			temp = temp->next;
+        			i++;
+    			}
+
+    			if (temp && i == sel) {
+        			menuTiempos(temp);
+    			} else {
+        			printf("Selección inválida.\n");
+    			}
+    			break;
+			}
+
+            case 2: anadirCircuito(); break;
+            case 3: eliminarCircuito(); break;
+            case 4: registrarResultado(); break;
+        	case 5: verResultados(); break;
+        	case 6: estrategiaBoxes(); break;
+            case 0: printf("Cerrando sesión...\n"); usuarioActual = NULL; break;
+            default: printf("Opción no válida.\n");
+        }
+    } while (op != 0);
+}
+
+void liberarMemoria() {
+    while (userList) {
+        User* temp = userList;
+        userList = userList->next;
+        free(temp);
+    }
+
+    while (listaCircuitos) {
+        Circuito* c = listaCircuitos;
+        listaCircuitos = listaCircuitos->next;
+
+        Tiempo* t = c->listaTiempos;
+        while (t) {
+            Tiempo* aux = t;
+            t = t->next;
+            free(aux);
+        }
+
+        free(c);
+    }
+    while (listaResultados) {
+        ResultadoCarrera* r = listaResultados;
+        listaResultados = listaResultados->next;
+        free(r);
+    }
+}
+
+void mostrarMenu() {
+    setcolor(WHITE);
+    setbkcolor(BLACK);
+    cleardevice();
+    
+    outtextxy(100, 50, "=== MENÚ PRINCIPAL ===");
+    outtextxy(100, 100, "1. Registrarse");
+    outtextxy(100, 150, "2. Iniciar sesión");
+    outtextxy(100, 200, "3. Mostrar usuarios");
+    outtextxy(100, 250, "0. Salir");
+    outtextxy(100, 300, "Selecciona una opción:");
+}
+
+void dibujarMenu() {
+    setcolor(WHITE);
+    setbkcolor(BLACK);
+    cleardevice();
+
+    outtextxy(200, 50, "=== MENÚ PRINCIPAL ===");
+    outtextxy(200, 100, "1. Registrarse");
+    outtextxy(200, 150, "2. Iniciar sesión");
+    outtextxy(200, 200, "3. Mostrar usuarios");
+    outtextxy(200, 250, "0. Salir");
+    outtextxy(200, 300, "Seleccione una opción:");
+
+    rectangle(180, 90, 450, 270);  // Borde
+}
+
+int getMenuSelection() {
+    while (!ismouseclick(WM_LBUTTONDOWN)) {}  // Espera un clic
+    int x, y;
+    getmouseclick(WM_LBUTTONDOWN, x, y);
+
+    if (x >= 150 && x <= 450) {
+        if (y >= 100 && y <= 150) return 1;
+        if (y >= 170 && y <= 220) return 2;
+        if (y >= 240 && y <= 290) return 3;
+        if (y >= 310 && y <= 360) return 0;
+    }
+
+    return -1;
+}
+
+int main() {
+    int gd = DETECT, gm;
+<<<<<<< HEAD
+    initgraph(&gd, &gm, "");
+=======
+    initwindow(640, 480);  // Ventana gráfica
+>>>>>>> 37d98abb09c0d74074845813c25f14d61ee4a74f
+
+    int op;
+    do {
+<<<<<<< HEAD
+        mostrarMenu();
+        scanf("%d", &op);
+=======
+        dibujarMenu();
+        op = getMenuSelection();  // Detectar clic en los botones
+>>>>>>> 37d98abb09c0d74074845813c25f14d61ee4a74f
+
+        switch (op) {
+            case 1: registerUser(); break;
+            case 2: if (loginUser()) postLoginMenu(); break;
+            case 3: showUsers(); break;
+            case 0: break;  // Salir del programa
+            default: printf("Opción inválida.\n");
+        }
+<<<<<<< HEAD
+    } while (op != 0);
+
+    closegraph();
+    liberarMemoria();
+=======
+
+    } while (op != 0);
+
+    closegraph();
+>>>>>>> 37d98abb09c0d74074845813c25f14d61ee4a74f
+>>>>>>> 4b47a765a008182bcfca4654a3f2adcac6d9d4a7
     return 0;
 }
 

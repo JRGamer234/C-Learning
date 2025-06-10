@@ -4,11 +4,19 @@
 CPP      = g++.exe
 CC       = gcc.exe
 WINDRES  = windres.exe
+<<<<<<< HEAD
+OBJ      = ProyectoFinal/main.o SinNombre1.o ../../../../Escritorio/SinNombre2.o
+LINKOBJ  = ProyectoFinal/main.o SinNombre1.o ../../../../Escritorio/SinNombre2.o
+LIBS     = -L"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib32" -L"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/lib32" -static-libgcc -lbgi -lgdi32 -lcomdlg32 -luuid -loleaut32 -lole32 -m32
+INCS     = -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.8.1/include"
+CXXINCS  = -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.8.1/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.8.1/include/c++"
+=======
 OBJ      = ProyectoFinal/main.o ../../../../Desktop/pruebalaptimer.o
 LINKOBJ  = ProyectoFinal/main.o ../../../../Desktop/pruebalaptimer.o
 LIBS     = -L"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/lib32" -static-libgcc -lbgi -lgdi32 -lcomdlg32 -luuid -loleaut32 -lole32 -m32
 INCS     = -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include"
 CXXINCS  = -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include/c++"
+>>>>>>> 37d98abb09c0d74074845813c25f14d61ee4a74f
 BIN      = FinalLapTimer.exe
 CXXFLAGS = $(CXXINCS) -m32
 CFLAGS   = $(INCS) -m32
@@ -27,5 +35,10 @@ $(BIN): $(OBJ)
 ProyectoFinal/main.o: ProyectoFinal/main.cpp
 	$(CPP) -c ProyectoFinal/main.cpp -o ProyectoFinal/main.o $(CXXFLAGS)
 
+<<<<<<< HEAD
+../../../../Escritorio/SinNombre2.o: ../../../../Escritorio/SinNombre2.cpp
+	$(CPP) -c ../../../../Escritorio/SinNombre2.cpp -o ../../../../Escritorio/SinNombre2.o $(CXXFLAGS)
+=======
 ../../../../Desktop/pruebalaptimer.o: ../../../../Desktop/pruebalaptimer.cpp
 	$(CPP) -c ../../../../Desktop/pruebalaptimer.cpp -o ../../../../Desktop/pruebalaptimer.o $(CXXFLAGS)
+>>>>>>> 37d98abb09c0d74074845813c25f14d61ee4a74f
