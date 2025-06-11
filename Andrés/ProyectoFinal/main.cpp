@@ -2,17 +2,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-<<<<<<< HEAD
-#include <graphics.h>
-#include <winbgim.h>
-#include <sstream>
-=======
 #include <cstring>
 #include <graphics.h>
 #include <winbgim.h>
 
 
->>>>>>> 37d98abb09c0d74074845813c25f14d61ee4a74f
 #define RED   "\x1b[31m"
 #define GREEN "\x1b[32m"
 #define RESET "\x1b[0m"
@@ -512,19 +506,7 @@ void liberarMemoria() {
         listaResultados = listaResultados->next;
         free(r);
     }
-}
 
-void mostrarMenu() {
-    setcolor(WHITE);
-    setbkcolor(BLACK);
-    cleardevice();
-    
-    outtextxy(100, 50, "=== MENÚ PRINCIPAL ===");
-    outtextxy(100, 100, "1. Registrarse");
-    outtextxy(100, 150, "2. Iniciar sesión");
-    outtextxy(100, 200, "3. Mostrar usuarios");
-    outtextxy(100, 250, "0. Salir");
-    outtextxy(100, 300, "Selecciona una opción:");
 }
 
 void dibujarMenu() {
@@ -559,21 +541,12 @@ int getMenuSelection() {
 
 int main() {
     int gd = DETECT, gm;
-<<<<<<< HEAD
-    initgraph(&gd, &gm, "");
-=======
     initwindow(640, 480);  // Ventana gráfica
->>>>>>> 37d98abb09c0d74074845813c25f14d61ee4a74f
 
     int op;
     do {
-<<<<<<< HEAD
-        mostrarMenu();
-        scanf("%d", &op);
-=======
         dibujarMenu();
         op = getMenuSelection();  // Detectar clic en los botones
->>>>>>> 37d98abb09c0d74074845813c25f14d61ee4a74f
 
         switch (op) {
             case 1: registerUser(); break;
@@ -582,17 +555,11 @@ int main() {
             case 0: break;  // Salir del programa
             default: printf("Opción inválida.\n");
         }
-<<<<<<< HEAD
-    } while (op != 0);
-
-    closegraph();
-    liberarMemoria();
-=======
 
     } while (op != 0);
 
     closegraph();
->>>>>>> 37d98abb09c0d74074845813c25f14d61ee4a74f
     return 0;
 }
+
 
