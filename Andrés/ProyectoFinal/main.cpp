@@ -1,6 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+<<<<<<< HEAD
+
+// Estructuras simples
+typedef struct {
+=======
 #include <stdbool.h>
 #include <cstring>
 #include <graphics.h>
@@ -26,373 +31,101 @@ typedef struct Circuito {
 } Circuito;
 
 typedef struct User {
+>>>>>>> 4b47a765a008182bcfca4654a3f2adcac6d9d4a7
     char username[50];
     char password[50];
-    struct User* next;
-} User;
+} Usuario;
 
-typedef struct ResultadoCarrera {
-    char fecha[20];
-    char tipo[30]; // "Resistencia 2h", "Sprint", etc.
-    int posicion;
-    struct ResultadoCarrera* next;
-} ResultadoCarrera;
-
-typedef struct BoxNode {
-    int numeroKart;
-    bool ocupado;
-    struct BoxNode* next;
-} BoxNode;
-
-typedef struct BoxColumn {
-    char nombre[6]; // "ROJO" o "AZUL"
-    BoxNode* karts;
-} BoxColumn;
-
-User* userList = NULL;
-User* usuarioActual = NULL;
-Circuito* listaCircuitos = NULL;
-ResultadoCarrera* listaResultados = NULL;
-
-float convertirTiempo(const char* tiempoStr) {
-    int min, seg, mil;
-    if (sscanf(tiempoStr, "%d:%d:%d", &min, &seg, &mil) != 3) {
-        printf("Formato inválido. Use mm:ss:ddd\n");
-        return -1;
-    }
-    return min * 60 + seg + mil / 1000.0;
-}
-
-void registerUser() {
-    char username[50], password[50];
-    printf("Ingrese nombre de usuario: ");
-    scanf("%s", username);
-
-    // Verifica si el usuario ya existe
-    User* temp = userList;
-    while (temp) {
-        if (strcmp(temp->username, username) == 0) {
-            printf("Ese usuario ya existe.\n");
-            return;
-        }
-        temp = temp->next;
-    }
-
-    printf("Ingrese contrasena: ");
-    scanf("%s", password);
-
-    User* newUser = (User*)malloc(sizeof(User));
-    if (!newUser) return;
-
-    strcpy(newUser->username, username);
-    strcpy(newUser->password, password);
-    newUser->next = userList;
-    userList = newUser;
-
-    printf("Registro exitoso.\n");
-}
-
-
-bool loginUser() {
-    char username[50], password[50];
-    printf("Ingrese nombre de usuario: ");
-    scanf("%s", username);
-    printf("Ingrese contrasena: ");
-    scanf("%s", password);
-
-    User* temp = userList;
-    while (temp) {
-        if (strcmp(temp->username, username) == 0 &&
-            strcmp(temp->password, password) == 0) {
-            usuarioActual = temp;
-            printf("Inicio de sesión exitoso.\n");
-            return true;
-        }
-        temp = temp->next;
-    }
-    printf("Usuario o contrasena incorrectos.\n");
-    return false;
-}
-
-void showUsers() {
-    User* temp = userList;
-    printf("Usuarios registrados:\n");
-    while (temp) {
-        printf("- %s\n", temp->username);
-        temp = temp->next;
-    }
-}
-
-void inicializarCircuitos() {
-    const char* nombres[5] = {"Santos", "Ariza", "Henakart", "Burgueno", "DR7"};
-    for (int i = 0; i < 5; i++) {
-        Circuito* nuevo = (Circuito*)malloc(sizeof(Circuito));
-        strcpy(nuevo->nombre, nombres[i]);
-        nuevo->listaTiempos = NULL;
-        nuevo->next = listaCircuitos;
-        listaCircuitos = nuevo;
-    }
-}
-
-Circuito* buscarCircuito(const char* nombre) {
-    Circuito* temp = listaCircuitos;
-    while (temp) {
-        if (strcmp(temp->nombre, nombre) == 0)
-            return temp;
-        temp = temp->next;
-    }
-    return NULL;
-}
-
-void mostrarCircuitos() {
-    Circuito* temp = listaCircuitos;
-    int i = 1;
-    while (temp) {
-        printf("%d. %s\n", i++, temp->nombre);
-        temp = temp->next;
-    }
-}
-
-void anadirCircuito() {
+typedef struct {
     char nombre[50];
-    printf("Ingrese nombre del nuevo circuito: ");
-    scanf("%s", nombre);
+    char tiempos[100][100]; // Almacena tiempos como string
+    int numTiempos;
+} Circuito;
 
-    if (buscarCircuito(nombre)) {
-        printf("El circuito ya existe. Se importarán los datos existentes.\n");
-        return;
-    }
+// Variables globales simples
+Usuario usuarios[50];
+Circuito circuitos[10];
+int numUsuarios = 0;
+int numCircuitos = 0;
+int usuarioLogueado = -1;
 
-    Circuito* nuevo = (Circuito*)malloc(sizeof(Circuito));
-    strcpy(nuevo->nombre, nombre);
-    nuevo->listaTiempos = NULL;
-    nuevo->next = listaCircuitos;
-    listaCircuitos = nuevo;
-
-    printf("Circuito anadido exitosamente.\n");
+void limpiar() {
+    system("cls");
 }
 
-void eliminarCircuito() {
-    char nombre[50];
-    printf("Ingrese nombre del circuito a eliminar: ");
-    scanf("%s", nombre);
+void pausa() {
+    printf("\nPresiona Enter...");
+    getchar();
+    getchar();
+}
 
-    Circuito *temp = listaCircuitos, *prev = NULL;
-    while (temp) {
-        if (strcmp(temp->nombre, nombre) == 0) {
-            if (prev) prev->next = temp->next;
-            else listaCircuitos = temp->next;
+void inicializar() {
+    // Circuitos por defecto
+    strcpy(circuitos[0].nombre, "Santos");
+    circuitos[0].numTiempos = 0;
+    strcpy(circuitos[1].nombre, "Ariza");
+    circuitos[1].numTiempos = 0;
+    strcpy(circuitos[2].nombre, "Henakart");
+    circuitos[2].numTiempos = 0;
+    strcpy(circuitos[3].nombre, "Burgueno");
+    circuitos[3].numTiempos = 0;
+    strcpy(circuitos[4].nombre, "DR7");
+    circuitos[4].numTiempos = 0;
+    numCircuitos = 5;
+}
 
-            Tiempo* t = temp->listaTiempos;
-            while (t) {
-                Tiempo* aux = t;
-                t = t->next;
-                free(aux);
-            }
-
-            free(temp);
-            printf("Circuito eliminado.\n");
+void registrar() {
+    limpiar();
+    printf("\n=== REGISTRO ===\n");
+    
+    char user[50], pass[50];
+    printf("Usuario: ");
+    scanf("%s", user);
+    printf("Password: ");
+    scanf("%s", pass);
+    
+    // Verificar si existe
+    for (int i = 0; i < numUsuarios; i++) {
+        if (strcmp(usuarios[i].username, user) == 0) {
+            printf("Usuario ya existe!\n");
+            pausa();
             return;
         }
-        prev = temp;
-        temp = temp->next;
     }
-
-    printf("Circuito no encontrado.\n");
-}
-
-void limpiarBuffer() {
-    char ch;
-    while (ch = getchar(), ch != '\n');
-}
-
-void anadirTiempo(Circuito* c) {
-    Tiempo* nuevo = (Tiempo*)malloc(sizeof(Tiempo));
-    if (!nuevo) return;
-
-    strcpy(nuevo->username, usuarioActual->username);
-
-    char tiempoStr[20];
-    float tiempo;
-
-    while (1) {
-        printf("Ingrese su mejor tiempo (mm:ss:ddd): ");
-        scanf("%19s", tiempoStr);
-        limpiarBuffer(); // evitar bucles
-
-        tiempo = convertirTiempo(tiempoStr);
-        if (tiempo >= 0)
-            break;
-
-        printf("Formato inválido. Intente nuevamente.\n");
-    }
-
-    nuevo->tiempo = tiempo;
-    nuevo->next = c->listaTiempos;
-    c->listaTiempos = nuevo;
-
-    printf("Tiempo registrado: %.3f s\n", tiempo);
-}
-
-void verTiempos(Circuito* c) {
-    Tiempo* temp = c->listaTiempos;
-    if (!temp) {
-        printf("Sin tiempos registrados.\n");
-        return;
-    }
-
-    printf("Tiempos en %s:\n", c->nombre);
-    while (temp) {
-        printf("%s: %.3f s\n", temp->username, temp->tiempo);
-        temp = temp->next;
-    }
-}
-
-void menuTiempos(Circuito* circuito) {
-    int op;
-    do {
-        printf("\n--- %s ---\n", circuito->nombre);
-        printf("1. Anadir tiempo\n");
-        printf("2. Ver tiempos\n");
-        printf("0. Volver atrás\n");
-        printf("Opción: ");
-        scanf("%d", &op);
-
-        switch(op) {
-            case 1: anadirTiempo(circuito); break;
-            case 2: verTiempos(circuito); break;
-            case 0: break;
-            default: printf("Opción no válida.\n");
-        }
-    } while (op != 0);
-}
-
-void registrarResultado() {
-    ResultadoCarrera* nuevo = (ResultadoCarrera*)malloc(sizeof(ResultadoCarrera));
-    if (!nuevo) return;
-
-    limpiarBuffer(); // por seguridad
-    printf("Ingrese la fecha (DD/MM/AAAA): ");
-    fgets(nuevo->fecha, sizeof(nuevo->fecha), stdin);
-    nuevo->fecha[strcspn(nuevo->fecha, "\n")] = 0;
-
-    printf("Tipo de carrera:\n");
-    printf("1. Resistencia 2h\n");
-    printf("2. Sprint\n");
-    printf("3. Resistencia más horas\n");
-    int tipo;
-    scanf("%d", &tipo);
-
-    switch (tipo) {
-        case 1: strcpy(nuevo->tipo, "Resistencia 2h"); break;
-        case 2: strcpy(nuevo->tipo, "Sprint"); break;
-        case 3: strcpy(nuevo->tipo, "Resistencia más horas"); break;
-        default: strcpy(nuevo->tipo, "Desconocido"); break;
-    }
-
-    printf("Posición final en la carrera: ");
-    scanf("%d", &nuevo->posicion);
-
-    nuevo->next = listaResultados;
-    listaResultados = nuevo;
-
-    printf("Resultado registrado con éxito.\n");
-}
-
-void verResultados() {
-    ResultadoCarrera* temp = listaResultados;
-    if (!temp) {
-        printf("No hay resultados registrados.\n");
-        return;
-    }
-
-    printf("=== RESULTADOS DE CARRERA ===\n");
-    while (temp) {
-        printf("Fecha: %s | Tipo: %s | Posición: %d\n", temp->fecha, temp->tipo, temp->posicion);
-        temp = temp->next;
-    }
-}
-
-int contarKarts(BoxNode* nodo) {
-    int count = 0;
-    while (nodo) {
-        count++;
-        nodo = nodo->next;
-    }
-    return count;
-}
-
-void mostrarBoxes(BoxColumn rojo, BoxColumn azul) {
-    BoxNode* rojoArr[MAX_KARTS], *azulArr[MAX_KARTS];
-    int totalR = 0, totalA = 0;
     
-    BoxNode* temp = rojo.karts;
-    while (temp && totalR < MAX_KARTS) {
-        rojoArr[totalR++] = temp;
-        temp = temp->next;
-    }
-
-    temp = azul.karts;
-    while (temp && totalA < MAX_KARTS) {
-        azulArr[totalA++] = temp;
-        temp = temp->next;
-    }
-
-    printf("ROJO\t\tAZUL\n");
-    int maxFilas = (totalR > totalA) ? totalR : totalA;
+    // Registrar
+    strcpy(usuarios[numUsuarios].username, user);
+    strcpy(usuarios[numUsuarios].password, pass);
+    numUsuarios++;
     
-    for (int i = 0; i < maxFilas; i++) {
-        if (i < totalR) {
-            printf("%s%d\t%s", (i >= totalR - 2) ? GREEN : RED, rojoArr[i]->numeroKart, RESET);
-        } else {
-            printf("\t");
-        }
-
-        if (i < totalA) {
-            printf("%s%d%s", (i >= totalA - 2) ? GREEN : RED, azulArr[i]->numeroKart, RESET);
-        }
-        printf("\n");
-    }
-
-    printf("\n%s= Ocupado%s, %s= Libre%s\n", RED, RESET, GREEN, RESET);
+    printf("Usuario registrado!\n");
+    pausa();
 }
 
-void inicializarBoxColumn(BoxColumn* columna, const char* nombre) {
-    strcpy(columna->nombre, nombre);
-    columna->karts = NULL;
-
-    for (int i = 1; i <= 2; i++) {
-        BoxNode* nuevo = (BoxNode*)malloc(sizeof(BoxNode));
-        if (!nuevo) {
-            printf("Error: No se pudo asignar memoria.\n");
-            return;
+int login() {
+    limpiar();
+    printf("\n=== LOGIN ===\n");
+    
+    char user[50], pass[50];
+    printf("Usuario: ");
+    scanf("%s", user);
+    printf("Password: ");
+    scanf("%s", pass);
+    
+    for (int i = 0; i < numUsuarios; i++) {
+        if (strcmp(usuarios[i].username, user) == 0 && 
+            strcmp(usuarios[i].password, pass) == 0) {
+            usuarioLogueado = i;
+            printf("Login exitoso!\n");
+            pausa();
+            return 1;
         }
-        nuevo->numeroKart = i;
-        nuevo->ocupado = false;
-        nuevo->next = columna->karts;
-        columna->karts = nuevo;
     }
-}
-
-BoxNode* agregarKart(BoxColumn* columna, int numero) {
-    BoxNode* nuevo = (BoxNode*)malloc(sizeof(BoxNode));
-    if (!nuevo) {
-        printf("Error: No se pudo asignar memoria.\n");
-        return NULL;
-    }
-    nuevo->numeroKart = numero;
-    nuevo->ocupado = false;
-    nuevo->next = NULL;
-
-    if (!columna->karts) {
-        columna->karts = nuevo;
-    } else {
-        BoxNode* ultimo = columna->karts;
-        while (ultimo->next) {
-            ultimo = ultimo->next;
-        }
-        ultimo->next = nuevo;
-    }
+<<<<<<< HEAD
+    
+    printf("Credenciales incorrectas!\n");
+    pausa();
+=======
     return nuevo;
 }
 
@@ -559,7 +292,155 @@ int main() {
     } while (op != 0);
 
     closegraph();
+<<<<<<< HEAD
     return 0;
 }
 
 
+=======
+>>>>>>> 37d98abb09c0d74074845813c25f14d61ee4a74f
+>>>>>>> 4b47a765a008182bcfca4654a3f2adcac6d9d4a7
+    return 0;
+}
+
+void verUsuarios() {
+    limpiar();
+    printf("\n=== USUARIOS ===\n");
+    
+    if (numUsuarios == 0) {
+        printf("No hay usuarios\n");
+    } else {
+        for (int i = 0; i < numUsuarios; i++) {
+            printf("%d. %s\n", i+1, usuarios[i].username);
+        }
+    }
+    pausa();
+}
+
+void anadirTiempo(int circuito) {
+    limpiar();
+    printf("\n=== AÑADIR TIEMPO - %s ===\n", circuitos[circuito].nombre);
+    
+    char tiempo[20];
+    printf("Ingrese tiempo (ej: 01:30:500): ");
+    scanf("%s", tiempo);
+    
+    int indice = circuitos[circuito].numTiempos;
+    sprintf(circuitos[circuito].tiempos[indice], "%s: %s", 
+            usuarios[usuarioLogueado].username, tiempo);
+    circuitos[circuito].numTiempos++;
+    
+    printf("Tiempo registrado!\n");
+    pausa();
+}
+
+void verTiempos(int circuito) {
+    limpiar();
+    printf("\n=== TIEMPOS - %s ===\n", circuitos[circuito].nombre);
+    
+    if (circuitos[circuito].numTiempos == 0) {
+        printf("Sin tiempos registrados\n");
+    } else {
+        for (int i = 0; i < circuitos[circuito].numTiempos; i++) {
+            printf("%s\n", circuitos[circuito].tiempos[i]);
+        }
+    }
+    pausa();
+}
+
+void menuCircuito(int circuito) {
+    int op;
+    do {
+        limpiar();
+        printf("\n=== %s ===\n", circuitos[circuito].nombre);
+        printf("1. Añadir tiempo\n");
+        printf("2. Ver tiempos\n");
+        printf("0. Volver\n");
+        printf("Opcion: ");
+        scanf("%d", &op);
+        
+        switch(op) {
+            case 1: anadirTiempo(circuito); break;
+            case 2: verTiempos(circuito); break;
+        }
+    } while(op != 0);
+}
+
+void gestionCircuitos() {
+    int op;
+    do {
+        limpiar();
+        printf("\n=== CIRCUITOS ===\n");
+        for (int i = 0; i < numCircuitos; i++) {
+            printf("%d. %s\n", i+1, circuitos[i].nombre);
+        }
+        printf("0. Volver\n");
+        printf("Opcion: ");
+        scanf("%d", &op);
+        
+        if (op > 0 && op <= numCircuitos) {
+            menuCircuito(op-1);
+        }
+    } while(op != 0);
+}
+
+void menuUsuario() {
+    int op;
+    do {
+        limpiar();
+        printf("\n=== MENU: %s ===\n", usuarios[usuarioLogueado].username);
+        printf("1. Gestionar circuitos\n");
+        printf("2. Simulacion boxes\n");
+        printf("0. Cerrar sesion\n");
+        printf("Opcion: ");
+        scanf("%d", &op);
+        
+        switch(op) {
+            case 1: gestionCircuitos(); break;
+            case 2: 
+                limpiar();
+                printf("\n=== BOXES ===\n");
+                printf("ROJO    AZUL\n");
+                printf("----    ----\n");
+                printf("K1      K1\n");
+                printf("K2      K2\n");
+                printf("Simulacion basica\n");
+                pausa();
+                break;
+            case 0: usuarioLogueado = -1; break;
+        }
+    } while(op != 0);
+}
+
+int main() {
+    inicializar();
+    
+    int op;
+    do {
+        limpiar();
+        printf("\n================================\n");
+        printf("      KARTING MANAGER\n");
+        printf("================================\n");
+        printf("1. Registrarse\n");
+        printf("2. Iniciar sesion\n");
+        printf("3. Ver usuarios\n");
+        printf("0. Salir\n");
+        printf("Opcion: ");
+        scanf("%d", &op);
+        
+        switch(op) {
+            case 1: registrar(); break;
+            case 2: 
+                if (login()) {
+                    menuUsuario();
+                }
+                break;
+            case 3: verUsuarios(); break;
+            case 0: printf("Gracias!\n"); break;
+            default: printf("Opcion invalida\n"); pausa();
+        }
+    } while(op != 0);
+    
+    return 0;
+}
+>>>>>>> 9dad59623baffdaac1d7b00a7867658955cc1952

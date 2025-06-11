@@ -1,0 +1,1065 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+#include <graphics.h>
+#include <winbgim.h>
+#include <conio.h>
+
+#define MAX_KARTS 100
+#define WINDOW_WIDTH 900
+#define WINDOW_HEIGHT 700
+
+typedef struct Tiempo {
+    char username[50];
+    float tiempo;
+    struct Tiempo* next;
+} Tiempo;
+
+typedef struct Circuito {
+    char nombre[50];
+    Tiempo* listaTiempos;
+    struct Circuito* next;
+} Circuito;
+
+typedef struct User {
+    char username[50];
+    char password[50];
+    struct User* next;
+} User;
+
+typedef struct ResultadoCarrera {
+    char fecha[20];
+    char tipo[30];
+    int posicion;
+    struct ResultadoCarrera* next;
+} ResultadoCarrera;
+
+typedef struct BoxNode {
+    int numeroKart;
+    bool ocupado;
+    char piloto[50];
+    struct BoxNode* next;
+} BoxNode;
+
+typedef struct BoxColumn {
+    char nombre[10];
+    BoxNode* karts;
+} BoxColumn;
+
+// Variables globales
+User* userList = NULL;
+User* usuarioActual = NULL;
+Circuito* listaCircuitos = NULL;
+ResultadoCarrera* listaResultados = NULL;
+
+// Funciones auxiliares
+void configurarTexto(int tamano) {
+    settextstyle(DEFAULT_FONT, HORIZ_DIR, tamano);
+}
+
+float convertirTiempo(const char* tiempoStr) {
+    int min, seg, mil;
+    if (sscanf(tiempoStr, "%d:%d:%d", &min, &seg, &mil) != 3) {
+        return -1;
+    }
+    return min * 60 + seg + mil / 1000.0;
+}
+
+void mostrarMensaje(const char* mensaje) {
+    cleardevice();
+    setcolor(WHITE);
+    setbkcolor(BLACK);
+    
+    configurarTexto(3);
+    char msg[200];
+    strcpy(msg, mensaje);
+    
+    int ancho = textwidth(msg);
+    int x = (WINDOW_WIDTH - ancho) / 2;
+    outtextxy(x, 200, msg);
+    
+    configurarTexto(2);
+    char continuar[] = "Presione cualquier tecla para continuar...";
+    ancho = textwidth(continuar);
+    x = (WINDOW_WIDTH - ancho) / 2;
+    outtextxy(x, 300, continuar);
+    
+    getch();
+}
+
+void dibujarBotonMejorado(int x, int y, int ancho, int alto, const char* texto, int colorFondo, bool seleccionado) {
+    if (seleccionado) {
+        setfillstyle(SOLID_FILL, YELLOW);
+        bar(x-3, y-3, x + ancho + 3, y + alto + 3);
+        setfillstyle(SOLID_FILL, colorFondo);
+        bar(x, y, x + ancho, y + alto);
+        setcolor(YELLOW);
+        setlinestyle(SOLID_LINE, 0, 3);
+        rectangle(x-2, y-2, x + ancho + 2, y + alto + 2);
+        setlinestyle(SOLID_LINE, 0, 1);
+    } else {
+        setfillstyle(SOLID_FILL, colorFondo);
+        bar(x, y, x + ancho, y + alto);
+    }
+    
+    setcolor(WHITE);
+    rectangle(x, y, x + ancho, y + alto);
+    
+    char textoMutable[100];
+    strcpy(textoMutable, texto);
+    
+    configurarTexto(2);
+    int textoAncho = textwidth(textoMutable);
+    int textoAlto = textheight(textoMutable);
+    int textoX = x + (ancho - textoAncho) / 2;
+    int textoY = y + (alto - textoAlto) / 2;
+    
+    setcolor(WHITE);
+    outtextxy(textoX, textoY, textoMutable);
+}
+
+void obtenerTextoGrafico(const char* prompt, char* resultado, int maxLen) {
+    int index = 0;
+    char ch;
+    
+    cleardevice();
+    setbkcolor(BLACK);
+    setcolor(WHITE);
+    
+    configurarTexto(3);
+    char promptMutable[200];
+    strcpy(promptMutable, prompt);
+    
+    int ancho = textwidth(promptMutable);
+    int x = (WINDOW_WIDTH - ancho) / 2;
+    outtextxy(x, 150, promptMutable);
+    
+    configurarTexto(2);
+    char instruccion[] = "Escriba y presione ENTER para confirmar:";
+    ancho = textwidth(instruccion);
+    x = (WINDOW_WIDTH - ancho) / 2;
+    outtextxy(x, 200, instruccion);
+    
+    int cajaX = 200;
+    int cajaY = 250;
+    int cajaAncho = 500;
+    int cajaAlto = 40;
+    
+    setcolor(CYAN);
+    setlinestyle(SOLID_LINE, 0, 2);
+    rectangle(cajaX, cajaY, cajaX + cajaAncho, cajaY + cajaAlto);
+    setlinestyle(SOLID_LINE, 0, 1);
+    
+    resultado[0] = '\0';
+    
+    while (1) {
+        if (kbhit()) {
+            ch = getch();
+            if (ch == 13) {
+                resultado[index] = '\0';
+                return;
+            } else if (ch == 8 && index > 0) {
+                index--;
+                resultado[index] = '\0';
+                setfillstyle(SOLID_FILL, BLACK);
+                bar(cajaX + 1, cajaY + 1, cajaX + cajaAncho - 1, cajaY + cajaAlto - 1);
+                if (index > 0) {
+                    setcolor(YELLOW);
+                    configurarTexto(2);
+                    outtextxy(cajaX + 10, cajaY + 10, resultado);
+                }
+            } else if (ch >= 32 && ch <= 126 && index < maxLen - 1) {
+                resultado[index] = ch;
+                resultado[index + 1] = '\0';
+                index++;
+                setcolor(YELLOW);
+                configurarTexto(2);
+                setfillstyle(SOLID_FILL, BLACK);
+                bar(cajaX + 1, cajaY + 1, cajaX + cajaAncho - 1, cajaY + cajaAlto - 1);
+                outtextxy(cajaX + 10, cajaY + 10, resultado);
+            }
+        }
+        delay(50);
+    }
+}
+
+void registerUserGrafico(void) {
+    char username[50], password[50];
+    
+    obtenerTextoGrafico("Registro - Ingrese nombre de usuario:", username, 50);
+    
+    User* temp = userList;
+    while (temp) {
+        if (strcmp(temp->username, username) == 0) {
+            mostrarMensaje("Ese usuario ya existe.");
+            return;
+        }
+        temp = temp->next;
+    }
+    
+    obtenerTextoGrafico("Ingrese contrasena:", password, 50);
+    
+    User* newUser = (User*)malloc(sizeof(User));
+    if (!newUser) {
+        mostrarMensaje("Error de memoria.");
+        return;
+    }
+    
+    strcpy(newUser->username, username);
+    strcpy(newUser->password, password);
+    newUser->next = userList;
+    userList = newUser;
+    
+    mostrarMensaje("Registro exitoso!");
+}
+
+bool loginUserGrafico(void) {
+    char username[50], password[50];
+    
+    obtenerTextoGrafico("Login - Ingrese nombre de usuario:", username, 50);
+    obtenerTextoGrafico("Ingrese contrasena:", password, 50);
+    
+    User* temp = userList;
+    while (temp) {
+        if (strcmp(temp->username, username) == 0 &&
+            strcmp(temp->password, password) == 0) {
+            usuarioActual = temp;
+            mostrarMensaje("Inicio de sesion exitoso!");
+            return true;
+        }
+        temp = temp->next;
+    }
+    mostrarMensaje("Usuario o contrasena incorrectos.");
+    return false;
+}
+
+void showUsersGrafico(void) {
+    cleardevice();
+    setbkcolor(BLACK);
+    setcolor(WHITE);
+    
+    configurarTexto(4);
+    char titulo[] = "USUARIOS REGISTRADOS";
+    int ancho = textwidth(titulo);
+    int x = (WINDOW_WIDTH - ancho) / 2;
+    outtextxy(x, 50, titulo);
+    
+    User* temp = userList;
+    int y = 150;
+    configurarTexto(2);
+    
+    if (!temp) {
+        char mensaje[] = "No hay usuarios registrados.";
+        ancho = textwidth(mensaje);
+        x = (WINDOW_WIDTH - ancho) / 2;
+        outtextxy(x, y, mensaje);
+    } else {
+        int contador = 1;
+        while (temp) {
+            char buffer[100];
+            sprintf(buffer, "%d. %s", contador, temp->username);
+            ancho = textwidth(buffer);
+            x = (WINDOW_WIDTH - ancho) / 2;
+            outtextxy(x, y, buffer);
+            temp = temp->next;
+            y += 30;
+            contador++;
+        }
+    }
+    
+    configurarTexto(2);
+    char continuar[] = "Presione cualquier tecla para continuar...";
+    ancho = textwidth(continuar);
+    x = (WINDOW_WIDTH - ancho) / 2;
+    outtextxy(x, y + 50, continuar);
+    getch();
+}
+
+void inicializarCircuitos(void) {
+    const char* nombres[5] = {"Santos", "Ariza", "Henakart", "Burgueno", "DR7"};
+    for (int i = 0; i < 5; i++) {
+        Circuito* nuevo = (Circuito*)malloc(sizeof(Circuito));
+        strcpy(nuevo->nombre, nombres[i]);
+        nuevo->listaTiempos = NULL;
+        nuevo->next = listaCircuitos;
+        listaCircuitos = nuevo;
+    }
+}
+
+Circuito* buscarCircuito(const char* nombre) {
+    Circuito* temp = listaCircuitos;
+    while (temp) {
+        if (strcmp(temp->nombre, nombre) == 0)
+            return temp;
+        temp = temp->next;
+    }
+    return NULL;
+}
+
+void anadirCircuitoGrafico(void) {
+    char nombre[50];
+    obtenerTextoGrafico("Ingrese nombre del nuevo circuito:", nombre, 50);
+
+    if (buscarCircuito(nombre)) {
+        mostrarMensaje("El circuito ya existe.");
+        return;
+    }
+
+    Circuito* nuevo = (Circuito*)malloc(sizeof(Circuito));
+    strcpy(nuevo->nombre, nombre);
+    nuevo->listaTiempos = NULL;
+    nuevo->next = listaCircuitos;
+    listaCircuitos = nuevo;
+
+    mostrarMensaje("Circuito anadido exitosamente!");
+}
+
+void eliminarCircuitoGrafico(void) {
+    char nombre[50];
+    obtenerTextoGrafico("Ingrese nombre del circuito a eliminar:", nombre, 50);
+
+    Circuito *temp = listaCircuitos, *prev = NULL;
+    while (temp) {
+        if (strcmp(temp->nombre, nombre) == 0) {
+            if (prev) prev->next = temp->next;
+            else listaCircuitos = temp->next;
+
+            Tiempo* t = temp->listaTiempos;
+            while (t) {
+                Tiempo* aux = t;
+                t = t->next;
+                free(aux);
+            }
+
+            free(temp);
+            mostrarMensaje("Circuito eliminado.");
+            return;
+        }
+        prev = temp;
+        temp = temp->next;
+    }
+
+    mostrarMensaje("Circuito no encontrado.");
+}
+
+int contarCircuitos(void) {
+    int count = 0;
+    Circuito* temp = listaCircuitos;
+    while (temp) {
+        count++;
+        temp = temp->next;
+    }
+    return count;
+}
+
+Circuito* obtenerCircuitoPorIndice(int indice) {
+    Circuito* temp = listaCircuitos;
+    int i = 0;
+    while (temp && i < indice) {
+        temp = temp->next;
+        i++;
+    }
+    return temp;
+}
+
+void anadirTiempoGrafico(Circuito* c) {
+    char tiempoStr[20];
+    
+    obtenerTextoGrafico("Ingrese su mejor tiempo (mm:ss:ddd):", tiempoStr, 20);
+    
+    float tiempo = convertirTiempo(tiempoStr);
+    if (tiempo < 0) {
+        mostrarMensaje("Formato invalido. Use mm:ss:ddd");
+        return;
+    }
+    
+    Tiempo* nuevo = (Tiempo*)malloc(sizeof(Tiempo));
+    if (!nuevo) {
+        mostrarMensaje("Error de memoria.");
+        return;
+    }
+    
+    strcpy(nuevo->username, usuarioActual->username);
+    nuevo->tiempo = tiempo;
+    nuevo->next = c->listaTiempos;
+    c->listaTiempos = nuevo;
+    
+    char mensaje[100];
+    sprintf(mensaje, "Tiempo registrado: %.3f s", tiempo);
+    mostrarMensaje(mensaje);
+}
+
+void menuTiemposGrafico(Circuito* circuito) {
+    int seleccionado = 0;
+    char tecla;
+    
+    while (1) {
+        cleardevice();
+        setbkcolor(BLACK);
+        setcolor(WHITE);
+        
+        configurarTexto(3);
+        char titulo[100];
+        sprintf(titulo, "CIRCUITO: %s", circuito->nombre);
+        int ancho = textwidth(titulo);
+        int x = (WINDOW_WIDTH - ancho) / 2;
+        outtextxy(x, 30, titulo);
+        
+        configurarTexto(1);
+        char instrucciones[] = "Use flechas, ENTER para seleccionar, ESC para volver";
+        ancho = textwidth(instrucciones);
+        x = (WINDOW_WIDTH - ancho) / 2;
+        outtextxy(x, 80, instrucciones);
+        
+        Tiempo* temp = circuito->listaTiempos;
+        int y = 120;
+        if (temp) {
+            configurarTexto(2);
+            char textoTiempos[] = "TIEMPOS REGISTRADOS:";
+            ancho = textwidth(textoTiempos);
+            x = (WINDOW_WIDTH - ancho) / 2;
+            setcolor(CYAN);
+            outtextxy(x, y, textoTiempos);
+            y += 40;
+            
+            setcolor(WHITE);
+            configurarTexto(2);
+            int contador = 1;
+            while (temp && y < 350) {
+                char buffer[100];
+                sprintf(buffer, "%d. %s: %.3f s", contador, temp->username, temp->tiempo);
+                ancho = textwidth(buffer);
+                x = (WINDOW_WIDTH - ancho) / 2;
+                outtextxy(x, y, buffer);
+                temp = temp->next;
+                y += 25;
+                contador++;
+            }
+        } else {
+            configurarTexto(2);
+            char sinTiempos[] = "Sin tiempos registrados.";
+            ancho = textwidth(sinTiempos);
+            x = (WINDOW_WIDTH - ancho) / 2;
+            setcolor(YELLOW);
+            outtextxy(x, y + 50, sinTiempos);
+            y += 80;
+        }
+        
+        y += 60;
+        dibujarBotonMejorado(250, y, 200, 40, "Anadir tiempo", GREEN, (seleccionado == 0));
+        dibujarBotonMejorado(470, y, 150, 40, "Volver", RED, (seleccionado == 1));
+        
+        tecla = getch();
+        
+        switch (tecla) {
+            case 75:
+            case 72:
+                seleccionado = (seleccionado - 1 + 2) % 2;
+                break;
+            case 77:
+            case 80:
+                seleccionado = (seleccionado + 1) % 2;
+                break;
+            case 13:
+                if (seleccionado == 0) {
+                    anadirTiempoGrafico(circuito);
+                } else {
+                    return;
+                }
+                break;
+            case 27:
+                return;
+        }
+    }
+}
+
+void mostrarCircuitosGrafico(void) {
+    int totalCircuitos = contarCircuitos();
+    int seleccionado = 0;
+    char tecla;
+    
+    while (1) {
+        cleardevice();
+        setbkcolor(BLACK);
+        setcolor(WHITE);
+        
+        configurarTexto(4);
+        char titulo[] = "CIRCUITOS DISPONIBLES";
+        int ancho = textwidth(titulo);
+        int x = (WINDOW_WIDTH - ancho) / 2;
+        outtextxy(x, 30, titulo);
+        
+        configurarTexto(1);
+        char instrucciones[] = "Use flechas ARRIBA/ABAJO, ENTER para seleccionar, ESC para volver";
+        ancho = textwidth(instrucciones);
+        x = (WINDOW_WIDTH - ancho) / 2;
+        outtextxy(x, 80, instrucciones);
+        
+        Circuito* temp = listaCircuitos;
+        int i = 0;
+        int y = 120;
+        
+        while (temp) {
+            char buffer[100];
+            sprintf(buffer, "%d. %s", i + 1, temp->nombre);
+            
+            dibujarBotonMejorado(250, y, 400, 40, buffer, BLUE, (i == seleccionado));
+            
+            temp = temp->next;
+            i++;
+            y += 50;
+        }
+        
+        dibujarBotonMejorado(150, y + 20, 200, 40, "Agregar Circuito", GREEN, (seleccionado == totalCircuitos));
+        dibujarBotonMejorado(370, y + 20, 200, 40, "Eliminar Circuito", MAGENTA, (seleccionado == totalCircuitos + 1));
+        dibujarBotonMejorado(590, y + 20, 150, 40, "Volver", RED, (seleccionado == totalCircuitos + 2));
+        
+        tecla = getch();
+        
+        switch (tecla) {
+            case 72:
+                seleccionado = (seleccionado - 1 + totalCircuitos + 3) % (totalCircuitos + 3);
+                break;
+            case 80:
+                seleccionado = (seleccionado + 1) % (totalCircuitos + 3);
+                break;
+            case 13:
+                if (seleccionado < totalCircuitos) {
+                    Circuito* circuitoSeleccionado = obtenerCircuitoPorIndice(seleccionado);
+                    if (circuitoSeleccionado) {
+                        menuTiemposGrafico(circuitoSeleccionado);
+                    }
+                } else if (seleccionado == totalCircuitos) {
+                    anadirCircuitoGrafico();
+                } else if (seleccionado == totalCircuitos + 1) {
+                    eliminarCircuitoGrafico();
+                } else {
+                    return;
+                }
+                break;
+            case 27:
+                return;
+        }
+    }
+}
+
+void estrategiaBoxesGrafico(void) {
+    BoxColumn rojo, azul;
+    strcpy(rojo.nombre, "ROJO");
+    strcpy(azul.nombre, "AZUL");
+    rojo.karts = NULL;
+    azul.karts = NULL;
+    
+    int seleccionado = 0;
+    char tecla;
+    
+    while (1) {
+        cleardevice();
+        setbkcolor(BLACK);
+        setcolor(WHITE);
+        
+        configurarTexto(4);
+        char titulo[] = "ESTRATEGIA DE BOXES";
+        int ancho = textwidth(titulo);
+        int x = (WINDOW_WIDTH - ancho) / 2;
+        outtextxy(x, 30, titulo);
+        
+        configurarTexto(1);
+        char instrucciones[] = "Use flechas, ENTER para seleccionar, ESC para salir";
+        ancho = textwidth(instrucciones);
+        x = (WINDOW_WIDTH - ancho) / 2;
+        outtextxy(x, 70, instrucciones);
+        
+        setcolor(RED);
+        setlinestyle(SOLID_LINE, 0, 3);
+        rectangle(100, 110, 350, 450);
+        setcolor(BLUE);
+        rectangle(450, 110, 700, 450);
+        setlinestyle(SOLID_LINE, 0, 1);
+        
+        configurarTexto(3);
+        setcolor(RED);
+        char rojoTexto[] = "COLUMNA ROJA";
+        ancho = textwidth(rojoTexto);
+        x = 225 - ancho/2;
+        outtextxy(x, 120, rojoTexto);
+        
+        setcolor(BLUE);
+        char azulTexto[] = "COLUMNA AZUL";
+        ancho = textwidth(azulTexto);
+        x = 575 - ancho/2;
+        outtextxy(x, 120, azulTexto);
+        
+        BoxNode* tempR = rojo.karts;
+        BoxNode* tempA = azul.karts;
+        int yR = 160, yA = 160;
+        
+        configurarTexto(2);
+        
+        setcolor(WHITE);
+        if (!tempR) {
+            char vacia[] = "Vacia";
+            ancho = textwidth(vacia);
+            x = 225 - ancho/2;
+            outtextxy(x, yR, vacia);
+        } else {
+            int posicion = 1;
+            while (tempR) {
+                char buffer[50];
+                sprintf(buffer, "%d. Kart #%d", posicion, tempR->numeroKart);
+                if (strlen(tempR->piloto) > 0) {
+                    strcat(buffer, " - ");
+                    strcat(buffer, tempR->piloto);
+                }
+                
+                ancho = textwidth(buffer);
+                x = 225 - ancho/2;
+                
+                if (posicion <= 2) {
+                    setcolor(GREEN);
+                } else {
+                    setcolor(RED);
+                }
+                
+                outtextxy(x, yR, buffer);
+                tempR = tempR->next;
+                yR += 25;
+                posicion++;
+            }
+        }
+        
+        setcolor(WHITE);
+        if (!tempA) {
+            char vacia[] = "Vacia";
+            ancho = textwidth(vacia);
+            x = 575 - ancho/2;
+            outtextxy(x, yA, vacia);
+        } else {
+            int posicion = 1;
+            while (tempA) {
+                char buffer[50];
+                sprintf(buffer, "%d. Kart #%d", posicion, tempA->numeroKart);
+                if (strlen(tempA->piloto) > 0) {
+                    strcat(buffer, " - ");
+                    strcat(buffer, tempA->piloto);
+                }
+                
+                ancho = textwidth(buffer);
+                x = 575 - ancho/2;
+                
+                if (posicion <= 2) {
+                    setcolor(GREEN);
+                } else {
+                    setcolor(RED);
+                }
+                
+                outtextxy(x, yA, buffer);
+                tempA = tempA->next;
+                yA += 25;
+                posicion++;
+            }
+        }
+        
+        setcolor(GREEN);
+        configurarTexto(1);
+        char leyenda1[] = "VERDE = Libre (Primeros 2)";
+        outtextxy(50, 470, leyenda1);
+        setcolor(RED);
+        char leyenda2[] = "ROJO = Ocupado";
+        outtextxy(50, 490, leyenda2);
+        
+        setcolor(WHITE);
+        dibujarBotonMejorado(50, 520, 180, 40, "Kart a ROJO", RED, (seleccionado == 0));
+        dibujarBotonMejorado(250, 520, 180, 40, "Kart a AZUL", BLUE, (seleccionado == 1));
+        dibujarBotonMejorado(450, 520, 150, 40, "Limpiar ROJO", MAGENTA, (seleccionado == 2));
+        dibujarBotonMejorado(620, 520, 150, 40, "Limpiar AZUL", CYAN, (seleccionado == 3));
+        dibujarBotonMejorado(350, 580, 150, 40, "Salir", YELLOW, (seleccionado == 4));
+        
+        tecla = getch();
+        
+        switch (tecla) {
+            case 75:
+                seleccionado = (seleccionado - 1 + 5) % 5;
+                break;
+            case 77:
+                seleccionado = (seleccionado + 1) % 5;
+                break;
+            case 72:
+                if (seleccionado >= 2) seleccionado -= 2;
+                break;
+            case 80:
+                if (seleccionado < 3) seleccionado += 2;
+                else if (seleccionado == 3) seleccionado = 4;
+                break;
+            case 13:
+                if (seleccionado == 0) {
+                    char numeroStr[10];
+                    obtenerTextoGrafico("Numero de kart para columna ROJA:", numeroStr, 10);
+                    int numero = atoi(numeroStr);
+                    if (numero > 0) {
+                        char piloto[50];
+                        obtenerTextoGrafico("Nombre del piloto (opcional):", piloto, 50);
+                        
+                        BoxNode* nuevo = (BoxNode*)malloc(sizeof(BoxNode));
+                        nuevo->numeroKart = numero;
+                        nuevo->ocupado = false;
+                        strcpy(nuevo->piloto, piloto);
+                        nuevo->next = rojo.karts;
+                        rojo.karts = nuevo;
+                    }
+                } else if (seleccionado == 1) {
+                    char numeroStr[10];
+                    obtenerTextoGrafico("Numero de kart para columna AZUL:", numeroStr, 10);
+                    int numero = atoi(numeroStr);
+                    if (numero > 0) {
+                        char piloto[50];
+                        obtenerTextoGrafico("Nombre del piloto (opcional):", piloto, 50);
+                        
+                        BoxNode* nuevo = (BoxNode*)malloc(sizeof(BoxNode));
+                        nuevo->numeroKart = numero;
+                        nuevo->ocupado = false;
+                        strcpy(nuevo->piloto, piloto);
+                        nuevo->next = azul.karts;
+                        azul.karts = nuevo;
+                    }
+                } else if (seleccionado == 2) {
+                    while (rojo.karts) {
+                        BoxNode* temp = rojo.karts;
+                        rojo.karts = rojo.karts->next;
+                        free(temp);
+                    }
+                    mostrarMensaje("Columna ROJA limpiada!");
+                } else if (seleccionado == 3) {
+                    while (azul.karts) {
+                        BoxNode* temp = azul.karts;
+                        azul.karts = azul.karts->next;
+                        free(temp);
+                    }
+                    mostrarMensaje("Columna AZUL limpiada!");
+                } else {
+                    return;
+                }
+                break;
+            case 27:
+                return;
+        }
+    }
+}
+
+void registrarResultadoGrafico(void) {
+    ResultadoCarrera* nuevo = (ResultadoCarrera*)malloc(sizeof(ResultadoCarrera));
+    if (!nuevo) {
+        mostrarMensaje("Error de memoria.");
+        return;
+    }
+
+    obtenerTextoGrafico("Ingrese la fecha (DD/MM/AAAA):", nuevo->fecha, 20);
+
+    int tipoSeleccionado = 0;
+    char tecla;
+    
+    while (1) {
+        cleardevice();
+        setbkcolor(BLACK);
+        setcolor(WHITE);
+        
+        configurarTexto(3);
+        char titulo[] = "TIPO DE CARRERA";
+        int ancho = textwidth(titulo);
+        int x = (WINDOW_WIDTH - ancho) / 2;
+        outtextxy(x, 150, titulo);
+        
+        configurarTexto(1);
+        char instrucciones[] = "Use flechas ARRIBA/ABAJO, ENTER para seleccionar";
+        ancho = textwidth(instrucciones);
+        x = (WINDOW_WIDTH - ancho) / 2;
+        outtextxy(x, 200, instrucciones);
+        
+        dibujarBotonMejorado(300, 250, 300, 40, "Resistencia 2h", GREEN, (tipoSeleccionado == 0));
+        dibujarBotonMejorado(300, 300, 300, 40, "Sprint", BLUE, (tipoSeleccionado == 1));
+        dibujarBotonMejorado(300, 350, 300, 40, "Resistencia mas horas", CYAN, (tipoSeleccionado == 2));
+        
+        tecla = getch();
+        
+        switch (tecla) {
+            case 72:
+                tipoSeleccionado = (tipoSeleccionado - 1 + 3) % 3;
+                break;
+            case 80:
+                tipoSeleccionado = (tipoSeleccionado + 1) % 3;
+                break;
+            case 13:
+                switch (tipoSeleccionado) {
+                    case 0: 
+                        strcpy(nuevo->tipo, "Resistencia 2h"); 
+                        break;
+                    case 1: 
+                        strcpy(nuevo->tipo, "Sprint"); 
+                        break;
+                    case 2: 
+                        strcpy(nuevo->tipo, "Resistencia mas horas"); 
+                        break;
+                }
+                goto continuar_registro;
+            case 27:
+                free(nuevo);
+                return;
+        }
+    }
+    
+    continuar_registro:
+    
+    char posicionStr[10];
+    obtenerTextoGrafico("Posicion final en la carrera:", posicionStr, 10);
+    nuevo->posicion = atoi(posicionStr);
+
+    nuevo->next = listaResultados;
+    listaResultados = nuevo;
+
+    mostrarMensaje("Resultado registrado con exito!");
+}
+
+void verResultadosGrafico(void) {
+    cleardevice();
+    setbkcolor(BLACK);
+    setcolor(WHITE);
+    
+    configurarTexto(4);
+    char titulo[] = "RESULTADOS DE CARRERA";
+    int ancho = textwidth(titulo);
+    int x = (WINDOW_WIDTH - ancho) / 2;
+    outtextxy(x, 30, titulo);
+    
+    ResultadoCarrera* temp = listaResultados;
+    int y = 100;
+    configurarTexto(2);
+    
+    if (!temp) {
+        char mensaje[] = "No hay resultados registrados.";
+        ancho = textwidth(mensaje);
+        x = (WINDOW_WIDTH - ancho) / 2;
+        setcolor(YELLOW);
+        outtextxy(x, y + 50, mensaje);
+    } else {
+        int contador = 1;
+        setcolor(CYAN);
+        char encabezado[] = "HISTORIAL DE CARRERAS:";
+        ancho = textwidth(encabezado);
+        x = (WINDOW_WIDTH - ancho) / 2;
+        outtextxy(x, y, encabezado);
+        y += 40;
+        
+        setcolor(WHITE);
+        while (temp && y < 600) {
+            char buffer[150];
+            sprintf(buffer, "%d. %s | %s | Posicion: %d", 
+                    contador, temp->fecha, temp->tipo, temp->posicion);
+            
+            if (temp->posicion == 1) setcolor(YELLOW);
+            else if (temp->posicion == 2) setcolor(LIGHTGRAY);
+            else if (temp->posicion == 3) setcolor(BROWN);
+            else setcolor(WHITE);
+            
+            ancho = textwidth(buffer);
+            x = (WINDOW_WIDTH - ancho) / 2;
+            outtextxy(x, y, buffer);
+            temp = temp->next;
+            y += 30;
+            contador++;
+        }
+    }
+    
+    setcolor(WHITE);
+    configurarTexto(2);
+    char continuar[] = "Presione cualquier tecla para continuar...";
+    ancho = textwidth(continuar);
+    x = (WINDOW_WIDTH - ancho) / 2;
+    outtextxy(x, y + 50, continuar);
+    getch();
+}
+
+void postLoginMenuGrafico(void) {
+    int seleccionado = 0;
+    char tecla;
+    
+    while (1) {
+        cleardevice();
+        setbkcolor(BLACK);
+        setcolor(WHITE);
+        
+        configurarTexto(4);
+        char titulo[100];
+        sprintf(titulo, "BIENVENIDO, %s", usuarioActual->username);
+        int ancho = textwidth(titulo);
+        int x = (WINDOW_WIDTH - ancho) / 2;
+        outtextxy(x, 30, titulo);
+        
+        configurarTexto(1);
+        char instrucciones[] = "Use flechas ARRIBA/ABAJO, ENTER para seleccionar, ESC para salir";
+        ancho = textwidth(instrucciones);
+        x = (WINDOW_WIDTH - ancho) / 2;
+        outtextxy(x, 80, instrucciones);
+        
+        dibujarBotonMejorado(300, 140, 300, 50, "Ver Circuitos", BLUE, (seleccionado == 0));
+        dibujarBotonMejorado(300, 200, 300, 50, "Estrategia Boxes", GREEN, (seleccionado == 1));
+        dibujarBotonMejorado(300, 260, 300, 50, "Registrar Resultado", CYAN, (seleccionado == 2));
+        dibujarBotonMejorado(300, 320, 300, 50, "Ver Resultados", MAGENTA, (seleccionado == 3));
+        dibujarBotonMejorado(300, 380, 300, 50, "Cerrar Sesion", RED, (seleccionado == 4));
+        
+        tecla = getch();
+        
+        switch (tecla) {
+            case 72:
+                seleccionado = (seleccionado - 1 + 5) % 5;
+                break;
+            case 80:
+                seleccionado = (seleccionado + 1) % 5;
+                break;
+            case 13:
+                switch (seleccionado) {
+                    case 0:
+                        mostrarCircuitosGrafico();
+                        break;
+                    case 1:
+                        estrategiaBoxesGrafico();
+                        break;
+                    case 2:
+                        registrarResultadoGrafico();
+                        break;
+                    case 3:
+                        verResultadosGrafico();
+                        break;
+                    case 4:
+                        usuarioActual = NULL;
+                        return;
+                }
+                break;
+            case 27:
+                usuarioActual = NULL;
+                return;
+        }
+    }
+}
+
+void dibujarMenuPrincipal(void) {
+    cleardevice();
+    setcolor(WHITE);
+    setbkcolor(BLACK);
+    
+    configurarTexto(5);
+    char titulo[] = "SISTEMA DE KARTING";
+    int ancho = textwidth(titulo);
+    int x = (WINDOW_WIDTH - ancho) / 2;
+    outtextxy(x, 50, titulo);
+    
+    configurarTexto(1);
+    char instrucciones[] = "Use teclas numericas 1-4, flechas + ENTER, o ESC para salir";
+    ancho = textwidth(instrucciones);
+    x = (WINDOW_WIDTH - ancho) / 2;
+    outtextxy(x, 120, instrucciones);
+    
+    setcolor(YELLOW);
+    setlinestyle(SOLID_LINE, 0, 3);
+    rectangle(50, 140, WINDOW_WIDTH - 50, WINDOW_HEIGHT - 50);
+    rectangle(55, 145, WINDOW_WIDTH - 55, WINDOW_HEIGHT - 55);
+    setlinestyle(SOLID_LINE, 0, 1);
+}
+
+void liberarMemoria(void) {
+    while (userList) {
+        User* temp = userList;
+        userList = userList->next;
+        free(temp);
+    }
+    
+    while (listaCircuitos) {
+        Circuito* c = listaCircuitos;
+        listaCircuitos = listaCircuitos->next;
+        
+        Tiempo* t = c->listaTiempos;
+        while (t) {
+            Tiempo* aux = t;
+            t = t->next;
+            free(aux);
+        }
+        
+        free(c);
+    }
+    
+    while (listaResultados) {
+        ResultadoCarrera* r = listaResultados;
+        listaResultados = listaResultados->next;
+        free(r);
+    }
+}
+
+int main() {
+    initwindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Sistema de Gestion de Karting - Completo");
+    
+    inicializarCircuitos();
+    
+    int seleccionado = 0;
+    char tecla;
+    
+    while (1) {
+        dibujarMenuPrincipal();
+        
+        setcolor(WHITE);
+        
+        dibujarBotonMejorado(300, 200, 300, 50, "1. Registrarse", GREEN, (seleccionado == 0));
+        dibujarBotonMejorado(300, 270, 300, 50, "2. Iniciar Sesion", BLUE, (seleccionado == 1));
+        dibujarBotonMejorado(300, 340, 300, 50, "3. Ver Usuarios", CYAN, (seleccionado == 2));
+        dibujarBotonMejorado(300, 410, 300, 50, "4. Salir", RED, (seleccionado == 3));
+        
+        tecla = getch();
+        
+        switch (tecla) {
+            case '1':
+                registerUserGrafico();
+                break;
+            case '2':
+                if (loginUserGrafico()) {
+                    postLoginMenuGrafico();
+                }
+                break;
+            case '3':
+                showUsersGrafico();
+                break;
+            case '4':
+            case 27:
+                closegraph();
+                liberarMemoria();
+                return 0;
+            case 72:
+                seleccionado = (seleccionado - 1 + 4) % 4;
+                break;
+            case 80:
+                seleccionado = (seleccionado + 1) % 4;
+                break;
+            case 13:
+                switch (seleccionado) {
+                    case 0:
+                        registerUserGrafico();
+                        break;
+                    case 1:
+                        if (loginUserGrafico()) {
+                            postLoginMenuGrafico();
+                        }
+                        break;
+                    case 2:
+                        showUsersGrafico();
+                        break;
+                    case 3:
+                        closegraph();
+                        liberarMemoria();
+                        return 0;
+                }
+                break;
+        }
+    }
+    
+    closegraph();
+    liberarMemoria();
+    return 0;
+}
